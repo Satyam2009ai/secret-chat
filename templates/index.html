@@ -103,17 +103,8 @@
       gap: 8px;
     }
 
-    .calc-display-wrap {
-      text-align: right;
-      padding: 20px 10px 28px;
-    }
-
-    .calc-expr {
-      font-size: 1.1rem;
-      color: var(--text-dim);
-      min-height: 24px;
-      word-break: break-all;
-    }
+    .calc-display-wrap { text-align: right; padding: 20px 10px 28px; }
+    .calc-expr { font-size: 1.1rem; color: var(--text-dim); min-height: 24px; word-break: break-all; }
 
     .calc-value {
       font-size: 3.4rem;
@@ -126,11 +117,7 @@
       -webkit-text-fill-color: transparent;
     }
 
-    .calc-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-    }
+    .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
 
     .calc-btn {
       aspect-ratio: 1 / 1;
@@ -159,11 +146,7 @@
     .calc-btn.zero { grid-column: span 2; aspect-ratio: auto; border-radius: 999px; }
 
     /* ================= 2. ROOM LOGIN ================= */
-    #login-screen {
-      justify-content: center;
-      padding: 28px;
-      gap: 18px;
-    }
+    #login-screen { justify-content: center; padding: 28px; gap: 16px; }
 
     .vault-badge {
       width: 78px;
@@ -195,12 +178,7 @@
       -webkit-text-fill-color: transparent;
     }
 
-    .login-sub {
-      text-align: center;
-      font-size: 0.88rem;
-      color: var(--text-dim);
-      margin-bottom: 10px;
-    }
+    .login-sub { text-align: center; font-size: 0.86rem; color: var(--text-dim); margin-bottom: 6px; }
 
     .input-box {
       width: 100%;
@@ -214,11 +192,7 @@
       transition: border-color 0.2s, box-shadow 0.2s;
     }
 
-    .input-box:focus {
-      border-color: var(--accent-2);
-      box-shadow: 0 0 16px rgba(0, 229, 255, 0.25);
-    }
-
+    .input-box:focus { border-color: var(--accent-2); box-shadow: 0 0 16px rgba(0, 229, 255, 0.25); }
     .input-box::placeholder { color: rgba(255, 255, 255, 0.45); }
 
     .primary-btn {
@@ -237,35 +211,50 @@
 
     .primary-btn:active { transform: scale(0.96); }
     .error-msg { color: #ff7a90; font-size: 0.88rem; text-align: center; min-height: 20px; }
-    .back-calc-link { text-align: center; color: var(--text-dim); font-size: 0.85rem; cursor: pointer; margin-top: 6px; }
+    .back-calc-link { text-align: center; color: var(--text-dim); font-size: 0.85rem; cursor: pointer; margin-top: 4px; }
 
     /* ================= 3. WHATSAPP-STYLE CHAT SCREEN ================= */
     #chat-screen { display: flex; flex-direction: column; }
 
     .chat-header {
-      padding: 12px 14px;
-      background: rgba(20, 22, 46, 0.88);
+      padding: 11px 12px;
+      background: rgba(20, 22, 46, 0.9);
       border-bottom: 1px solid var(--glass-border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
       z-index: 10;
     }
 
-    .partner-info { display: flex; align-items: center; gap: 11px; min-width: 0; }
-    .avatar-wrap { position: relative; width: 44px; height: 44px; flex-shrink: 0; }
+    .partner-info { display: flex; align-items: center; gap: 9px; min-width: 0; }
+
+    .back-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .avatar-wrap { position: relative; width: 42px; height: 42px; flex-shrink: 0; }
 
     .avatar {
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       background: linear-gradient(135deg, #ff4ecd, #7a5cff);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       box-shadow: 0 4px 14px rgba(255, 78, 205, 0.35);
     }
 
@@ -273,8 +262,8 @@
       position: absolute;
       bottom: 1px;
       right: 1px;
-      width: 12px;
-      height: 12px;
+      width: 11px;
+      height: 11px;
       border-radius: 50%;
       border: 2px solid #14162e;
       background: #888;
@@ -283,8 +272,8 @@
 
     .status-dot.live { background: #00f59b; box-shadow: 0 0 10px #00f59b; }
     .partner-text { min-width: 0; }
-    .partner-name { font-weight: 700; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .partner-status { font-size: 0.78rem; color: var(--text-dim); margin-top: 2px; transition: color 0.2s; }
+    .partner-name { font-weight: 700; font-size: 0.98rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .partner-status { font-size: 0.75rem; color: var(--text-dim); margin-top: 2px; transition: color 0.2s; }
     .partner-status.live { color: #00f59b; font-weight: 600; }
     .partner-status.typing { color: #00e5ff; font-weight: 600; animation: pulseText 1s infinite; }
 
@@ -293,16 +282,16 @@
       50% { opacity: 0.45; }
     }
 
-    .header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .header-actions { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
 
     .circle-icon-btn {
-      width: 38px;
-      height: 38px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       border: none;
       background: rgba(255, 255, 255, 0.1);
       color: #fff;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -313,30 +302,31 @@
     .circle-icon-btn:active { transform: scale(0.88); }
     .btn-voice { background: linear-gradient(135deg, #00c853, #00e5ff); color: #06131f; }
     .btn-video { background: linear-gradient(135deg, #ff4ecd, #ff9a3c); color: #16091f; }
-    .btn-knock { background: rgba(255, 214, 0, 0.22); color: #ffe066; }
+    .btn-knock { background: rgba(255, 214, 0, 0.24); color: #ffe066; }
     .btn-panic { background: linear-gradient(135deg, #ff3b5c, #ff0040); color: #fff; box-shadow: 0 0 12px rgba(255, 59, 92, 0.45); }
 
     .privacy-bar {
-      padding: 6px 14px;
-      background: rgba(0, 0, 0, 0.25);
+      padding: 6px 12px;
+      background: rgba(0, 0, 0, 0.28);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       color: var(--text-dim);
+      gap: 6px;
     }
 
     .pill-toggle {
-      padding: 4px 10px;
+      padding: 4px 9px;
       border-radius: 999px;
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.12);
       color: #fff;
       cursor: pointer;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       transition: background 0.2s;
     }
 
@@ -400,12 +390,25 @@
 
     .msg-meta {
       font-size: 0.67rem;
-      opacity: 0.8;
+      opacity: 0.85;
       margin-top: 5px;
       display: flex;
       justify-content: flex-end;
       align-items: center;
       gap: 6px;
+    }
+
+    .seen-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.72);
+    }
+
+    .seen-indicator.is-seen {
+      color: #00f5ff;
+      text-shadow: 0 0 8px rgba(0, 245, 255, 0.55);
     }
 
     .edit-msg-btn {
@@ -425,7 +428,6 @@
 
     .edit-msg-btn:hover { background: rgba(0, 229, 255, 0.45); }
     .edit-msg-btn:active { transform: scale(0.85); }
-
     .edited-tag { font-style: italic; opacity: 0.85; }
 
     .sys-pill {
@@ -439,31 +441,23 @@
       text-align: center;
     }
 
-    /* Media & File Cards inside Chat */
-    .chat-img-preview {
-      max-width: 100%;
-      max-height: 240px;
-      border-radius: 14px;
-      display: block;
-      cursor: pointer;
-      margin-bottom: 6px;
+    .knock-pill {
+      align-self: center;
+      font-size: 0.82rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, rgba(255, 214, 0, 0.28), rgba(255, 78, 205, 0.28));
+      border: 1px solid rgba(255, 214, 0, 0.5);
+      color: #fff3b0;
+      padding: 7px 15px;
+      border-radius: 999px;
+      text-align: center;
+      animation: popIn 0.25s ease;
     }
 
-    .chat-video-preview {
-      max-width: 100%;
-      max-height: 220px;
-      border-radius: 12px;
-      display: block;
-      margin-bottom: 6px;
-      background: #000;
-    }
-
-    .chat-audio-preview {
-      width: 220px;
-      max-width: 100%;
-      height: 36px;
-      margin-bottom: 6px;
-    }
+    /* Media & File Cards */
+    .chat-img-preview { max-width: 100%; max-height: 240px; border-radius: 14px; display: block; cursor: pointer; margin-bottom: 6px; }
+    .chat-video-preview { max-width: 100%; max-height: 220px; border-radius: 12px; display: block; margin-bottom: 6px; background: #000; }
+    .chat-audio-preview { width: 220px; max-width: 100%; height: 36px; margin-bottom: 6px; }
 
     .file-card {
       display: flex;
@@ -510,18 +504,10 @@
 
     .save-file-btn:active { transform: scale(0.92); }
 
-    .view-once-card {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      cursor: pointer;
-      font-weight: 600;
-      padding: 2px 0;
-    }
-
+    .view-once-card { display: flex; align-items: center; gap: 9px; cursor: pointer; font-weight: 600; padding: 2px 0; }
     .view-once-card.opened { opacity: 0.55; cursor: default; font-style: italic; font-weight: 400; }
 
-    /* Context Strip above Input (Editing / File Preview / One-Time Mode) */
+    /* Context Strip above Input */
     .composer-banner {
       padding: 8px 14px;
       background: rgba(24, 28, 58, 0.96);
@@ -535,29 +521,9 @@
     }
 
     .composer-banner.hidden { display: none; }
-
-    .banner-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 0;
-      flex: 1;
-    }
-
-    .banner-thumb {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      object-fit: cover;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-    }
-
-    .banner-text {
-      min-width: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+    .banner-left { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
+    .banner-thumb { width: 38px; height: 38px; border-radius: 10px; object-fit: cover; border: 1px solid rgba(255, 255, 255, 0.25); }
+    .banner-text { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
     .banner-close {
       width: 28px;
@@ -610,11 +576,9 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      transition: transform 0.14s;
     }
 
     .attach-circle-btn:active { transform: scale(0.9); }
-
     .send-wrap { position: relative; flex-shrink: 0; }
 
     .send-circle-btn {
@@ -664,7 +628,6 @@
 
     .send-badge.show { display: flex; }
 
-    /* Long-Press Floating Popup Menu */
     .send-popup {
       position: absolute;
       bottom: 58px;
@@ -698,14 +661,12 @@
       align-items: center;
       gap: 9px;
       text-align: left;
-      transition: background 0.15s;
     }
 
-    .popup-option:active { transform: scale(0.97); }
     .popup-option.fire { background: linear-gradient(135deg, rgba(255, 78, 205, 0.35), rgba(255, 154, 60, 0.35)); color: #ffd4f4; }
     .popup-option.normal { background: rgba(0, 229, 255, 0.16); color: #9ff6ff; }
 
-    /* ================= VIEW-ONCE / IMAGE FULLSCREEN MODAL ================= */
+    /* ================= MODAL ================= */
     .modal-overlay {
       position: absolute;
       inset: 0;
@@ -719,13 +680,7 @@
       gap: 14px;
     }
 
-    .modal-overlay img,
-    .modal-overlay video {
-      max-width: 100%;
-      max-height: 70%;
-      border-radius: 18px;
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
-    }
+    .modal-overlay img, .modal-overlay video { max-width: 100%; max-height: 70%; border-radius: 18px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6); }
 
     .modal-text-card {
       max-width: 90%;
@@ -739,20 +694,8 @@
       word-break: break-word;
     }
 
-    .timer-bar-wrap {
-      width: 80%;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 999px;
-      overflow: hidden;
-    }
-
-    .timer-bar-fill {
-      height: 100%;
-      width: 100%;
-      background: linear-gradient(90deg, #ff4ecd, #00e5ff);
-      transition: width 5s linear;
-    }
+    .timer-bar-wrap { width: 80%; height: 6px; background: rgba(255, 255, 255, 0.15); border-radius: 999px; overflow: hidden; }
+    .timer-bar-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #ff4ecd, #00e5ff); transition: width 5s linear; }
 
     .modal-close-btn {
       padding: 10px 22px;
@@ -777,15 +720,7 @@
       padding: 36px 20px 34px;
     }
 
-    #remote-video {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: 1;
-      background: #000;
-    }
+    #remote-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; background: #000; }
 
     #local-video {
       position: absolute;
@@ -801,13 +736,7 @@
       background: #111;
     }
 
-    .call-top-info {
-      position: relative;
-      z-index: 4;
-      text-align: center;
-      margin-top: 20px;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
-    }
+    .call-top-info { position: relative; z-index: 4; text-align: center; margin-top: 20px; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7); }
 
     .call-avatar-big {
       width: 96px;
@@ -849,7 +778,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.15s;
     }
 
     .call-btn:active { transform: scale(0.9); }
@@ -862,17 +790,18 @@
       position: absolute;
       top: 16px;
       left: 50%;
-      transform: translateX(-50%) translateY(-80px);
-      background: rgba(15, 20, 42, 0.95);
+      transform: translateX(-50%) translateY(-90px);
+      background: rgba(15, 20, 42, 0.96);
       border: 1px solid var(--accent-2);
       color: #fff;
-      padding: 10px 18px;
-      border-radius: 999px;
-      font-size: 0.84rem;
+      padding: 10px 16px;
+      border-radius: 18px;
+      font-size: 0.82rem;
       z-index: 100;
       transition: transform 0.3s ease;
-      white-space: nowrap;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      max-width: 90%;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
     }
 
     .toast.show { transform: translateX(-50%) translateY(0); }
@@ -920,9 +849,9 @@
     <div id="login-screen" class="screen hidden">
       <div class="vault-badge"><i class="fa-solid fa-user-secret"></i></div>
       <div class="login-title">Secret Live Room</div>
-      <div class="login-sub">Zero History • Max 2 Log • Wi-Fi Voice & Video</div>
+      <div class="login-sub">One-Time Seen • Refresh/Back pe Clear • Voice & Video</div>
 
-      <input id="inp-name" class="input-box" type="text" placeholder="Tumhara Nickname (optional)" maxlength="18" />
+      <input id="inp-name" class="input-box" type="text" placeholder="Apna Nickname (dono alag rakho, e.g. R / P)" maxlength="18" />
       <input id="inp-room" class="input-box" type="text" placeholder="Secret Room Name (e.g. math101)" maxlength="24" />
       <input id="inp-pin" class="input-box" type="password" inputmode="numeric" placeholder="4-Digit Secret PIN (e.g. 4829)" maxlength="8" />
 
@@ -935,6 +864,9 @@
     <div id="chat-screen" class="screen hidden">
       <div class="chat-header">
         <div class="partner-info">
+          <button class="back-btn" title="Back & Clear Seen Chat" onclick="leaveAndClearToCalc()">
+            <i class="fa-solid fa-arrow-left"></i>
+          </button>
           <div class="avatar-wrap">
             <div id="partner-avatar" class="avatar">P</div>
             <div id="status-dot" class="status-dot"></div>
@@ -952,7 +884,7 @@
           <button class="circle-icon-btn btn-video" title="Video Call" onclick="initiateCall('video')">
             <i class="fa-solid fa-video"></i>
           </button>
-          <button class="circle-icon-btn btn-knock" title="Knock Partner" onclick="sendKnock()">
+          <button class="circle-icon-btn btn-knock" title="Send Disguised Notification" onclick="sendKnock()">
             <i class="fa-solid fa-bell"></i>
           </button>
           <button class="circle-icon-btn btn-panic" title="Panic Escape" onclick="triggerPanic()">
@@ -964,8 +896,8 @@
       <div class="privacy-bar">
         <span id="room-label">Room: ---</span>
         <div style="display:flex; gap:6px;">
-          <button id="destruct-toggle" class="pill-toggle" onclick="toggleAutoDestruct()">
-            <i class="fa-solid fa-fire"></i> 30s Auto-Delete: OFF
+          <button id="autohide-toggle" class="pill-toggle" onclick="toggleAutoHideAfterSeen()">
+            <i class="fa-solid fa-hourglass-half"></i> After-Seen 30s: OFF
           </button>
           <button id="blur-toggle" class="pill-toggle" onclick="toggleBlur()">
             <i class="fa-solid fa-eye-slash"></i> Blur
@@ -1000,10 +932,9 @@
         <button class="attach-circle-btn" title="Attach Photo / Video / Any File" onclick="document.getElementById('file-input').click()">
           <i class="fa-solid fa-paperclip"></i>
         </button>
-        <input id="msg-input" class="msg-input" type="text" placeholder="Message likho... (Long-press Send = One-Time)" autocomplete="off" />
+        <input id="msg-input" class="msg-input" type="text" placeholder="Message likho... (Hold Send = 1x)" autocomplete="off" />
 
         <div class="send-wrap">
-          <!-- Long-Press Popup Menu -->
           <div id="send-popup" class="send-popup">
             <button class="popup-option fire" onclick="chooseOneTimeSend()">
               <i class="fa-solid fa-fire"></i>
@@ -1011,7 +942,7 @@
             </button>
             <button class="popup-option normal" onclick="chooseNormalSend()">
               <i class="fa-solid fa-paper-plane"></i>
-              <span>Normal Send (Save ON)</span>
+              <span>Normal Send (Seen-Once)</span>
             </button>
           </div>
 
@@ -1063,16 +994,19 @@
     const MAX_FILE_MB = 15;
 
     const socket = io();
+    let swRegistration = null;
     let mySid = null;
     let currentRoom = null;
     let partnerOnline = false;
     let partnerName = "Partner";
-    let autoDestructOn = false;
+    let autoHideAfterSeen = false;
+    let isBlurred = false;
     let typingTimeout = null;
 
-    // New States: Edit, Pending File, One-Time Mode
+    // Seen-Once & Composer States
+    const unseenIncomingIds = new Set();
     let editingMsgId = null;
-    let pendingFile = null; // { fileData, fileName, fileType, fileSize }
+    let pendingFile = null;
     let oneTimeSticky = false;
     let modalAutoCloseTimer = null;
 
@@ -1091,6 +1025,37 @@
       ]
     };
 
+    // ================= SERVICE WORKER & MOBILE NOTIFICATIONS =================
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => { swRegistration = reg; })
+        .catch(() => {});
+    }
+
+    async function requestNotifPermission() {
+      if (!("Notification" in window)) return;
+      if (Notification.permission === "default") {
+        try { await Notification.requestPermission(); } catch {}
+      }
+    }
+
+    async function showSystemNotification(title, body) {
+      if (!("Notification" in window) || Notification.permission !== "granted") return;
+      try {
+        const reg = swRegistration || (navigator.serviceWorker ? await navigator.serviceWorker.ready : null);
+        if (reg && reg.showNotification) {
+          await reg.showNotification(title, {
+            body,
+            vibrate: [220, 100, 220],
+            tag: 'study-notes-alert',
+            renotify: true
+          });
+          return;
+        }
+      } catch {}
+      try { new Notification(title, { body }); } catch {}
+    }
+
     // ================= HELPERS =================
     function playTone(freq = 660, duration = 0.14) {
       try {
@@ -1099,19 +1064,21 @@
         const gain = ctx.createGain();
         osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, ctx.currentTime);
-        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+        gain.gain.setValueAtTime(0.14, ctx.currentTime);
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start();
         osc.stop(ctx.currentTime + duration);
-      } catch (e) {}
+      } catch {}
     }
 
+    let toastTimer = null;
     function showToast(msg) {
       const t = document.getElementById('toast');
       t.textContent = msg;
       t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 2600);
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
     }
 
     function showScreen(id) {
@@ -1138,6 +1105,14 @@
       if (n.endsWith('.xls') || n.endsWith('.xlsx')) return 'fa-file-excel';
       if (n.endsWith('.ppt') || n.endsWith('.pptx')) return 'fa-file-powerpoint';
       return 'fa-file-lines';
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
     }
 
     async function saveFileToDevice(dataUrl, fileName) {
@@ -1188,21 +1163,27 @@
       }
     }
 
-    // ================= 2. ROOM JOIN & NOTIFICATIONS =================
-    function requestNotifPermission() {
-      if ("Notification" in window && Notification.permission === "default") {
-        Notification.requestPermission();
-      }
-    }
-
+    // ================= 2. ROOM JOIN & LEAVE =================
     function joinVault() {
-      const name = document.getElementById('inp-name').value.trim() || "Partner";
+      const name = document.getElementById('inp-name').value.trim();
       const room = document.getElementById('inp-room').value.trim();
       const pin = document.getElementById('inp-pin').value.trim();
       document.getElementById('login-error').textContent = "";
 
       requestNotifPermission();
       socket.emit('join_vault', { name, room, pin });
+    }
+
+    function leaveAndClearToCalc() {
+      endCall(true);
+      socket.emit('leave_vault');
+      document.getElementById('messages-area').innerHTML = "";
+      unseenIncomingIds.clear();
+      cancelEdit();
+      clearPendingFile();
+      currentRoom = null;
+      partnerOnline = false;
+      showScreen('calc-screen');
     }
 
     socket.on('join_error', (data) => {
@@ -1214,11 +1195,47 @@
       currentRoom = data.room;
       document.getElementById('room-label').textContent = "Room: " + data.room;
       document.getElementById('messages-area').innerHTML = "";
-      addSystemNote("Private room active • Send pe Long-Press = One-Time");
+      unseenIncomingIds.clear();
+      addSystemNote("One-Time Seen active • Seen hone ke baad Back/Refresh pe sab clear");
       showScreen('chat-screen');
     });
 
-    // ================= 3. LIVE STATUS & TYPING =================
+    // ================= 3. ONE-TIME SEEN ENGINE =================
+    function checkAndMarkSeen() {
+      const chatVisible = !document.getElementById('chat-screen').classList.contains('hidden');
+      if (chatVisible && document.visibilityState === 'visible' && !isBlurred && unseenIncomingIds.size > 0) {
+        const idsToMark = Array.from(unseenIncomingIds);
+        unseenIncomingIds.clear();
+        socket.emit('mark_seen', { msgIds: idsToMark });
+      }
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') checkAndMarkSeen();
+    });
+
+    window.addEventListener('focus', () => checkAndMarkSeen());
+
+    socket.on('messages_seen', (data) => {
+      (data.msgIds || []).forEach(id => {
+        const bubble = document.querySelector(`.msg-bubble[data-msg-id="${id}"]`);
+        if (!bubble) return;
+
+        const tick = bubble.querySelector('.seen-indicator');
+        if (tick) {
+          tick.classList.add('is-seen');
+          tick.innerHTML = '<i class="fa-solid fa-check-double"></i> Seen';
+        }
+
+        // Agar "After-Seen 30s" ON tha, toh timer sirf SEEN hone ke baad shuru hoga
+        if (bubble.dataset.autohide === 'true' && !bubble.dataset.hideScheduled) {
+          bubble.dataset.hideScheduled = 'true';
+          scheduleAutoHide(bubble);
+        }
+      });
+    });
+
+    // ================= 4. LIVE STATUS & TYPING =================
     socket.on('room_status', (data) => {
       const others = data.users.filter(u => u.sid !== mySid);
       const dot = document.getElementById('status-dot');
@@ -1243,7 +1260,7 @@
         dot.classList.remove('live');
         nameEl.textContent = "Waiting for Partner...";
         avatarEl.textContent = "?";
-        statusEl.textContent = "Offline • Knock bhej sakte ho";
+        statusEl.textContent = "Offline • Unseen SMS safe rahenge";
         statusEl.className = "partner-status";
       }
     });
@@ -1273,7 +1290,7 @@
       }
     });
 
-    // ================= 4. LONG-PRESS SEND BUTTON & ONE-TIME LOGIC =================
+    // ================= 5. LONG-PRESS SEND BUTTON & ONE-TIME =================
     const sendBtn = document.getElementById('send-btn');
     const sendPopup = document.getElementById('send-popup');
     let pressTimer = null;
@@ -1298,14 +1315,12 @@
     }
 
     function openSendPopup() {
-      if (editingMsgId) return; // Edit karte waqt one-time popup nahi khulega
+      if (editingMsgId) return;
       sendPopup.classList.add('open');
       if (navigator.vibrate) navigator.vibrate(40);
     }
 
-    function closeSendPopup() {
-      sendPopup.classList.remove('open');
-    }
+    function closeSendPopup() { sendPopup.classList.remove('open'); }
 
     sendBtn.addEventListener('pointerdown', (e) => {
       e.preventDefault();
@@ -1320,18 +1335,14 @@
       e.preventDefault();
       clearTimeout(pressTimer);
       if (!longPressTriggered) {
-        if (sendPopup.classList.contains('open')) {
-          closeSendPopup();
-        } else {
-          handlePrimarySend();
-        }
+        if (sendPopup.classList.contains('open')) closeSendPopup();
+        else handlePrimarySend();
       }
     });
 
     sendBtn.addEventListener('pointerleave', () => clearTimeout(pressTimer));
     sendBtn.addEventListener('pointercancel', () => clearTimeout(pressTimer));
 
-    // Bahar click karne pe popup close ho
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.send-wrap')) closeSendPopup();
     });
@@ -1340,13 +1351,11 @@
       closeSendPopup();
       const hasText = msgInput.value.trim().length > 0;
       if (pendingFile || hasText) {
-        // Agar file ya text ready hai toh seedha One-Time bhej do
         executeSend(true);
         oneTimeSticky = false;
       } else {
-        // Agar kuch type/attach nahi hai toh agle send ke liye One-Time ON kar do
         oneTimeSticky = true;
-        showToast("One-Time mode ON! Agla photo/file/msg 1-Time jayega.");
+        showToast("One-Time (1x) mode ON! Agla photo/file/SMS 1x jayega.");
       }
       updateSendBtnVisual();
     }
@@ -1356,11 +1365,8 @@
       oneTimeSticky = false;
       updateSendBtnVisual();
       const hasText = msgInput.value.trim().length > 0;
-      if (pendingFile || hasText) {
-        executeSend(false);
-      } else {
-        showToast("Normal Send mode ON (Save button available).");
-      }
+      if (pendingFile || hasText) executeSend(false);
+      else showToast("Normal Seen-Once mode ON.");
     }
 
     function handlePrimarySend() {
@@ -1378,28 +1384,22 @@
     function executeSend(isOneTime) {
       const text = msgInput.value.trim();
 
-      // 1. Agar koi file attached hai toh bhejo
       if (pendingFile) {
-        if (!partnerOnline) {
-          showToast("Partner offline hai! File bhejne ke liye dono ka live hona zaroori hai.");
-          return;
-        }
         socket.emit('send_file', {
           fileData: pendingFile.fileData,
           fileName: pendingFile.fileName,
           fileType: pendingFile.fileType,
           fileSize: pendingFile.fileSize,
           oneTime: isOneTime,
-          autoDestruct: autoDestructOn
+          autoHide: autoHideAfterSeen
         });
         clearPendingFile();
       }
 
-      // 2. Agar text bhi likha hai toh text bhejo
       if (text) {
         socket.emit('send_message', {
           text,
-          autoDestruct: autoDestructOn,
+          autoHide: autoHideAfterSeen,
           oneTime: isOneTime
         });
         socket.emit('typing', { isTyping: false });
@@ -1407,7 +1407,7 @@
       }
     }
 
-    // ================= 5. MESSAGE EDITING =================
+    // ================= 6. MESSAGE EDITING =================
     function startEditMessage(msgId, currentText) {
       clearPendingFile();
       editingMsgId = msgId;
@@ -1427,10 +1427,7 @@
 
     function submitEdit() {
       const newText = msgInput.value.trim();
-      if (!newText || !editingMsgId) {
-        cancelEdit();
-        return;
-      }
+      if (!newText || !editingMsgId) { cancelEdit(); return; }
       socket.emit('edit_message', { msgId: editingMsgId, newText });
       cancelEdit();
     }
@@ -1449,19 +1446,20 @@
       bubble.classList.add('edited-flash');
     });
 
-    // ================= 6. PRIVACY TOGGLES & TEXT MESSAGES =================
-    function toggleAutoDestruct() {
-      autoDestructOn = !autoDestructOn;
-      const btn = document.getElementById('destruct-toggle');
-      btn.classList.toggle('active', autoDestructOn);
-      btn.innerHTML = `<i class="fa-solid fa-fire"></i> 30s Auto-Delete: ${autoDestructOn ? 'ON' : 'OFF'}`;
+    // ================= 7. PRIVACY TOGGLES & TEXT MESSAGES =================
+    function toggleAutoHideAfterSeen() {
+      autoHideAfterSeen = !autoHideAfterSeen;
+      const btn = document.getElementById('autohide-toggle');
+      btn.classList.toggle('active', autoHideAfterSeen);
+      btn.innerHTML = `<i class="fa-solid fa-hourglass-half"></i> After-Seen 30s: ${autoHideAfterSeen ? 'ON' : 'OFF'}`;
     }
 
     function toggleBlur() {
       const area = document.getElementById('messages-area');
       const btn = document.getElementById('blur-toggle');
-      const blurred = area.classList.toggle('blurred');
-      btn.classList.toggle('active', blurred);
+      isBlurred = area.classList.toggle('blurred');
+      btn.classList.toggle('active', isBlurred);
+      if (!isBlurred) checkAndMarkSeen();
     }
 
     function addSystemNote(text) {
@@ -1475,7 +1473,7 @@
 
     socket.on('system_note', (data) => addSystemNote(data.msg));
 
-    function scheduleAutoDestruct(bubble) {
+    function scheduleAutoHide(bubble) {
       setTimeout(() => {
         bubble.style.transition = 'opacity 0.5s, transform 0.5s';
         bubble.style.opacity = '0';
@@ -1491,6 +1489,7 @@
       const bubble = document.createElement('div');
       bubble.className = 'msg-bubble ' + (isMe ? 'me' : 'them');
       bubble.setAttribute('data-msg-id', data.id);
+      if (data.autoHide) bubble.dataset.autohide = 'true';
 
       if (data.oneTime) {
         const card = document.createElement('div');
@@ -1536,8 +1535,15 @@
       meta.appendChild(editedSpan);
 
       const timeSpan = document.createElement('span');
-      timeSpan.innerHTML = `${data.autoDestruct ? '<i class="fa-solid fa-fire"></i> ' : ''}${data.fromRam ? 'RAM • ' : ''}${timeStr}`;
+      timeSpan.innerHTML = `${data.autoHide ? '<i class="fa-solid fa-hourglass-half"></i> ' : ''}${timeStr}`;
       meta.appendChild(timeSpan);
+
+      if (isMe && !data.oneTime) {
+        const tick = document.createElement('span');
+        tick.className = 'seen-indicator';
+        tick.innerHTML = '<i class="fa-solid fa-check"></i> Sent';
+        meta.appendChild(tick);
+      }
 
       bubble.appendChild(meta);
       area.appendChild(bubble);
@@ -1545,15 +1551,17 @@
 
       if (!isMe) {
         playTone(540, 0.1);
-        if (document.hidden && "Notification" in window && Notification.permission === "granted") {
-          new Notification("Study Notes Update", { body: "Naya chapter summary available hai." });
+        if (!data.oneTime) {
+          unseenIncomingIds.add(data.id);
+          checkAndMarkSeen();
+        }
+        if (document.visibilityState !== 'visible' || isBlurred) {
+          showSystemNotification("Study Notes Update", "Naya important note update aaya hai.");
         }
       }
-
-      if (data.autoDestruct) scheduleAutoDestruct(bubble);
     });
 
-    // ================= 7. ALL FILE TYPES ATTACH, PREVIEW, SAVE & ONE-TIME =================
+    // ================= 8. ALL FILE TYPES ATTACH, PREVIEW, SAVE & SEEN =================
     function handleFileSelect(event) {
       const file = event.target.files[0];
       event.target.value = "";
@@ -1565,7 +1573,7 @@
       }
 
       cancelEdit();
-      showToast("File prepare ho rahi hai...");
+      showToast("File ready ho rahi hai...");
 
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -1583,17 +1591,14 @@
     function renderPendingFileBanner() {
       const banner = document.getElementById('file-banner');
       const content = document.getElementById('file-banner-content');
-      if (!pendingFile) {
-        banner.classList.add('hidden');
-        return;
-      }
+      if (!pendingFile) { banner.classList.add('hidden'); return; }
 
       if (pendingFile.fileType.startsWith('image/')) {
         content.innerHTML = `
           <img src="${pendingFile.fileData}" class="banner-thumb" alt="preview" />
           <div class="banner-text">
             <strong>${escapeHtml(pendingFile.fileName)}</strong><br/>
-            <span style="opacity:0.7; font-size:0.74rem;">${formatBytes(pendingFile.fileSize)} • Tap Send (Normal) | Hold Send (One-Time)</span>
+            <span style="opacity:0.7; font-size:0.74rem;">${formatBytes(pendingFile.fileSize)} • Tap Send (Save ON) | Hold (1x)</span>
           </div>`;
       } else {
         const icon = getFileIcon(pendingFile.fileType, pendingFile.fileName);
@@ -1601,7 +1606,7 @@
           <div class="file-card-icon"><i class="fa-solid ${icon}"></i></div>
           <div class="banner-text">
             <strong>${escapeHtml(pendingFile.fileName)}</strong><br/>
-            <span style="opacity:0.7; font-size:0.74rem;">${formatBytes(pendingFile.fileSize)} • Tap Send (Normal) | Hold Send (One-Time)</span>
+            <span style="opacity:0.7; font-size:0.74rem;">${formatBytes(pendingFile.fileSize)} • Tap Send (Save ON) | Hold (1x)</span>
           </div>`;
       }
       banner.classList.remove('hidden');
@@ -1612,22 +1617,15 @@
       document.getElementById('file-banner').classList.add('hidden');
     }
 
-    function escapeHtml(str) {
-      return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
-    }
-
     socket.on('receive_file', (data) => {
       const area = document.getElementById('messages-area');
       const isMe = data.senderSid === mySid;
       const bubble = document.createElement('div');
       bubble.className = 'msg-bubble ' + (isMe ? 'me' : 'them');
+      bubble.setAttribute('data-msg-id', data.id);
+      if (data.autoHide) bubble.dataset.autohide = 'true';
 
       if (data.oneTime) {
-        // ONE-TIME MODE (No Save Button)
         const card = document.createElement('div');
         card.className = 'view-once-card';
         const label = data.fileType.startsWith('image/') ? 'Photo' : (data.fileType.startsWith('video/') ? 'Video' : 'File');
@@ -1647,7 +1645,6 @@
         }
         bubble.appendChild(card);
       } else {
-        // NORMAL MODE (Preview + Save Button for BOTH sender & receiver)
         if (data.fileType.startsWith('image/')) {
           const img = document.createElement('img');
           img.src = data.fileData;
@@ -1680,7 +1677,6 @@
           bubble.appendChild(card);
         }
 
-        // Save / Download Button
         const saveBtn = document.createElement('button');
         saveBtn.className = 'save-file-btn';
         saveBtn.innerHTML = `<i class="fa-solid fa-download"></i> Save`;
@@ -1691,20 +1687,35 @@
       const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const meta = document.createElement('div');
       meta.className = 'msg-meta';
-      meta.innerHTML = `${data.autoDestruct ? '<i class="fa-solid fa-fire"></i> ' : ''}${timeStr}`;
-      bubble.appendChild(meta);
+      meta.innerHTML = `<span>${data.autoHide ? '<i class="fa-solid fa-hourglass-half"></i> ' : ''}${timeStr}</span>`;
 
+      if (isMe && !data.oneTime) {
+        const tick = document.createElement('span');
+        tick.className = 'seen-indicator';
+        tick.innerHTML = '<i class="fa-solid fa-check"></i> Sent';
+        meta.appendChild(tick);
+      }
+
+      bubble.appendChild(meta);
       area.appendChild(bubble);
       area.scrollTop = area.scrollHeight;
-      if (!isMe) playTone(620, 0.12);
-      if (data.autoDestruct) scheduleAutoDestruct(bubble);
+
+      if (!isMe) {
+        playTone(620, 0.12);
+        if (!data.oneTime) {
+          unseenIncomingIds.add(data.id);
+          checkAndMarkSeen();
+        }
+        if (document.visibilityState !== 'visible' || isBlurred) {
+          showSystemNotification("Study Notes Update", "Ek nayi study file share hui hai.");
+        }
+      }
     });
 
-    // ================= 8. VIEWER MODAL (ONE-TIME & NORMAL ZOOM) =================
+    // ================= 9. VIEWER MODAL =================
     function closeViewerModal() {
       clearTimeout(modalAutoCloseTimer);
-      const modal = document.getElementById('viewer-modal');
-      modal.classList.add('hidden');
+      document.getElementById('viewer-modal').classList.add('hidden');
       document.getElementById('modal-media-container').innerHTML = "";
       document.getElementById('timer-bar-wrap').classList.add('hidden');
     }
@@ -1806,19 +1817,35 @@
       document.getElementById('viewer-modal').classList.remove('hidden');
     }
 
-    // ================= 9. DISGUISED KNOCK & PANIC =================
-    function sendKnock() {
+    // ================= 10. DISGUISED KNOCK & PANIC =================
+    async function sendKnock() {
+      await requestNotifPermission();
+      if ("Notification" in window && Notification.permission === "denied") {
+        showToast("Browser mein Notifications blocked hain — Chrome Settings se Allow karo.");
+      }
       socket.emit('knock_partner');
-      showToast("Disguised Knock alert bhej diya gaya!");
     }
 
+    socket.on('knock_status', (data) => {
+      showToast(data.msg);
+    });
+
     socket.on('knock_received', (data) => {
-      playTone(760, 0.2);
-      if (navigator.vibrate) navigator.vibrate([160, 80, 160]);
-      showToast("Partner Knock kar raha hai!");
-      if ("Notification" in window && Notification.permission === "granted") {
-        new Notification("Study Reminder", { body: data.msg });
-      }
+      playTone(880, 0.22);
+      setTimeout(() => playTone(1040, 0.22), 200);
+      if (navigator.vibrate) navigator.vibrate([220, 100, 220, 100, 220]);
+
+      // Chat screen mein visible ping banner
+      const area = document.getElementById('messages-area');
+      const div = document.createElement('div');
+      div.className = 'knock-pill';
+      div.innerHTML = `<i class="fa-solid fa-bell"></i> ${escapeHtml(data.sender || 'Partner')} ne tumhe Knock kiya hai!`;
+      area.appendChild(div);
+      area.scrollTop = area.scrollHeight;
+
+      showToast((data.sender || "Partner") + " ne Knock kiya hai!");
+      // Android Chrome + Desktop OS notification bar alert via Service Worker
+      showSystemNotification("Study Reminder", data.msg);
     });
 
     function triggerPanic() {
@@ -1828,7 +1855,7 @@
       window.location.replace(PANIC_REDIRECT_URL);
     }
 
-    // ================= 10. WEBRTC VOICE & VIDEO CALL =================
+    // ================= 11. WEBRTC VOICE & VIDEO CALL =================
     async function getMedia(type) {
       const constraints = {
         audio: true,
@@ -1879,7 +1906,7 @@
         document.getElementById('local-video').srcObject = localStream;
         showCallUI(type === 'video' ? "Video Calling..." : "Voice Calling...", false, type);
         socket.emit('call_request', { callType: type });
-      } catch (err) {
+      } catch {
         showToast("Camera/Mic permission allow karo (HTTPS zaroori hai)");
       }
     }
@@ -1889,6 +1916,7 @@
       partnerName = data.callerName || partnerName;
       playTone(820, 0.25);
       if (navigator.vibrate) navigator.vibrate([300, 150, 300]);
+      showSystemNotification("Study Reminder", "Live study session start ho gaya hai.");
       showCallUI(
         data.callType === 'video' ? "Incoming Video Call..." : "Incoming Voice Call...",
         true,
@@ -1902,11 +1930,9 @@
         document.getElementById('local-video').srcObject = localStream;
         peerConn = createPeerConnection();
         showCallUI("Connected • Live", false, currentCallType);
-        if (currentCallType === 'video') {
-          document.getElementById('call-top-info').style.opacity = '0.35';
-        }
+        if (currentCallType === 'video') document.getElementById('call-top-info').style.opacity = '0.35';
         socket.emit('call_accept', { callType: currentCallType });
-      } catch (err) {
+      } catch {
         showToast("Camera/Mic access fail hua!");
         rejectCall();
       }
@@ -1927,18 +1953,14 @@
       const offer = await peerConn.createOffer();
       await peerConn.setLocalDescription(offer);
       document.getElementById('call-state-text').textContent = "Connected • Live";
-      if (currentCallType === 'video') {
-        document.getElementById('call-top-info').style.opacity = '0.35';
-      }
+      if (currentCallType === 'video') document.getElementById('call-top-info').style.opacity = '0.35';
       socket.emit('webrtc_offer', { offer });
     });
 
     socket.on('webrtc_offer', async (data) => {
       if (!peerConn) peerConn = createPeerConnection();
       await peerConn.setRemoteDescription(new RTCSessionDescription(data.offer));
-      for (const c of pendingIceCandidates) {
-        await peerConn.addIceCandidate(new RTCIceCandidate(c));
-      }
+      for (const c of pendingIceCandidates) await peerConn.addIceCandidate(new RTCIceCandidate(c));
       pendingIceCandidates = [];
       const answer = await peerConn.createAnswer();
       await peerConn.setLocalDescription(answer);
@@ -1948,9 +1970,7 @@
     socket.on('webrtc_answer', async (data) => {
       if (peerConn) {
         await peerConn.setRemoteDescription(new RTCSessionDescription(data.answer));
-        for (const c of pendingIceCandidates) {
-          await peerConn.addIceCandidate(new RTCIceCandidate(c));
-        }
+        for (const c of pendingIceCandidates) await peerConn.addIceCandidate(new RTCIceCandidate(c));
         pendingIceCandidates = [];
       }
     });
