@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>QuickCalc • Smart Calculator</title>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-1: #0f0c29;
+      --bg-2: #302b63;
+      --bg-3: #24243e;
+      --accent-1: #ff4ecd;
+      --accent-2: #00e5ff;
+      --accent-3: #00f59b;
+      --danger: #ff3b5c;
+      --glass: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.16);
+      --text-main: #ffffff;
+      --text-dim: rgba(255, 255, 255, 0.68);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      height: 100dvh;
+      width: 100vw;
+      overflow: hidden;
+      background: linear-gradient(-45deg, #0f0c29, #2b1055, #1b3b6f, #0d324d);
+      background-size: 400% 400%;
+      animation: gradientFlow 12s ease infinite;
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    @keyframes gradientFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .app-shell {
+      width: 100%;
+      height: 100%;
+      max-width: 480px;
+      position: relative;
+      overflow: hidden;
+      background: rgba(12, 14, 30, 0.68);
+      backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media (min-width: 500px) {
+      .app-shell {
+        height: 92dvh;
+        border-radius: 28px;
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
+      }
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.96);
+      z-index: -1;
+    }
+
+    /* ================= 1. STEALTH CALCULATOR ================= */
+    #calc-screen {
+      padding: 24px 20px;
+      justify-content: flex-end;
+      background: rgba(10, 12, 26, 0.85);
+    }
+
+    .calc-brand {
+      position: absolute;
+      top: 20px;
+      left: 22px;
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .calc-display-wrap {
+      text-align: right;
+      padding: 20px 10px 28px;
+    }
+
+    .calc-expr {
+      font-size: 1.1rem;
+      color: var(--text-dim);
+      min-height: 24px;
+      word-break: break-all;
+    }
+
+    .calc-value {
+      font-size: 3.4rem;
+      font-weight: 600;
+      margin-top: 6px;
+      word-break: break-all;
+      background: linear-gradient(90deg, #fff, #b8f2ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .calc-btn {
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 1.45rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .calc-btn:active {
+      transform: scale(0.9);
+    }
+
+    .calc-btn.op {
+      background: rgba(0, 229, 255, 0.18);
+      color: #70f3ff;
+    }
+
+    .calc-btn.fn {
+      background: rgba(255, 78, 205, 0.18);
+      color: #ff9be4;
+    }
+
+    .calc-btn.eq {
+      background: linear-gradient(135deg, #ff4ecd, #00e5ff);
+      color: #0b0d1f;
+      font-weight: 700;
+      box-shadow: 0 8px 22px rgba(0, 229, 255, 0.35);
+    }
+
+    .calc-btn.zero {
+      grid-column: span 2;
+      aspect-ratio: auto;
+      border-radius: 999px;
+    }
+
+    /* ================= 2. ROOM LOGIN ================= */
+    #login-screen {
+      justify-content: center;
+      padding: 28px;
+      gap: 18px;
+    }
+
+    .vault-badge {
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      margin: 0 auto 6px;
+      background: linear-gradient(135deg, #ff4ecd, #00e5ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: #0d1024;
+      box-shadow: 0 0 30px rgba(255, 78, 205, 0.5);
+      animation: floatPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes floatPulse {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-6px) scale(1.04); }
+    }
+
+    .login-title {
+      text-align: center;
+      font-size: 1.7rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #ff79dc, #5cf2ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .login-sub {
+      text-align: center;
+      font-size: 0.88rem;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+    }
+
+    .input-box {
+      width: 100%;
+      padding: 15px 18px;
+      border-radius: 18px;
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .input-box:focus {
+      border-color: var(--accent-2);
+      box-shadow: 0 0 16px rgba(0, 229, 255, 0.25);
+    }
+
+    .input-box::placeholder {
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    .primary-btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #00f59b, #00e5ff);
+      color: #081221;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 10px 26px rgba(0, 229, 255, 0.35);
+      transition: transform 0.15s ease;
+    }
+
+    .primary-btn:active {
+      transform: scale(0.96);
+    }
+
+    .error-msg {
+      color: #ff7a90;
+      font-size: 0.88rem;
+      text-align: center;
+      min-height: 20px;
+    }
+
+    .back-calc-link {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+
+    /* ================= 3. WHATSAPP-STYLE CHAT SCREEN ================= */
+    #chat-screen {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      padding: 12px 14px;
+      background: rgba(20, 22, 46, 0.88);
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      z-index: 10;
+    }
+
+    .partner-info {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+    }
+
+    .avatar-wrap {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff4ecd, #7a5cff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.15rem;
+      box-shadow: 0 4px 14px rgba(255, 78, 205, 0.35);
+    }
+
+    .status-dot {
+      position: absolute;
+      bottom: 1px;
+      right: 1px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid #14162e;
+      background: #888;
+      transition: background 0.3s;
+    }
+
+    .status-dot.live {
+      background: #00f59b;
+      box-shadow: 0 0 10px #00f59b;
+    }
+
+    .partner-text {
+      min-width: 0;
+    }
+
+    .partner-name {
+      font-weight: 700;
+      font-size: 1rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .partner-status {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      margin-top: 2px;
+      transition: color 0.2s;
+    }
+
+    .partner-status.live {
+      color: #00f59b;
+      font-weight: 600;
+    }
+
+    .partner-status.typing {
+      color: #00e5ff;
+      font-weight: 600;
+      animation: pulseText 1s infinite;
+    }
+
+    @keyframes pulseText {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.45; }
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .circle-icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s, background 0.2s;
+    }
+
+    .circle-icon-btn:active {
+      transform: scale(0.88);
+    }
+
+    .btn-voice { background: linear-gradient(135deg, #00c853, #00e5ff); color: #06131f; }
+    .btn-video { background: linear-gradient(135deg, #ff4ecd, #ff9a3c); color: #16091f; }
+    .btn-knock { background: rgba(255, 214, 0, 0.22); color: #ffe066; }
+    .btn-panic { background: linear-gradient(135deg, #ff3b5c, #ff0040); color: #fff; box-shadow: 0 0 12px rgba(255, 59, 92, 0.45); }
+
+    /* Sub-bar for room info & quick privacy toggles */
+    .privacy-bar {
+      padding: 6px 14px;
+      background: rgba(0, 0, 0, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.74rem;
+      color: var(--text-dim);
+    }
+
+    .pill-toggle {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.72rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.2s;
+    }
+
+    .pill-toggle.active {
+      background: rgba(255, 78, 205, 0.32);
+      border-color: #ff4ecd;
+      color: #ffb8ee;
+    }
+
+    /* Chat Messages Area */
+    .messages-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: filter 0.25s ease;
+    }
+
+    .messages-area.blurred {
+      filter: blur(14px);
+      user-select: none;
+    }
+
+    .msg-bubble {
+      max-width: 78%;
+      padding: 11px 15px;
+      border-radius: 20px;
+      font-size: 0.96rem;
+      line-height: 1.4;
+      word-wrap: break-word;
+      animation: popIn 0.22s ease;
+      position: relative;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(10px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .msg-bubble.me {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #7f00ff, #e100ff);
+      color: #fff;
+      border-bottom-right-radius: 6px;
+      box-shadow: 0 6px 18px rgba(225, 0, 255, 0.22);
+    }
+
+    .msg-bubble.them {
+      align-self: flex-start;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      border-bottom-left-radius: 6px;
+    }
+
+    .msg-meta {
+      font-size: 0.66rem;
+      opacity: 0.72;
+      margin-top: 4px;
+      text-align: right;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .sys-pill {
+      align-self: center;
+      font-size: 0.74rem;
+      background: rgba(0, 229, 255, 0.14);
+      border: 1px solid rgba(0, 229, 255, 0.25);
+      color: #9ff6ff;
+      padding: 5px 12px;
+      border-radius: 999px;
+      text-align: center;
+    }
+
+    .view-once-card {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .view-once-card.opened {
+      opacity: 0.55;
+      cursor: default;
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    /* Bottom Input Bar */
+    .chat-input-bar {
+      padding: 10px 12px 14px;
+      background: rgba(16, 18, 38, 0.92);
+      border-top: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .msg-input {
+      flex: 1;
+      padding: 12px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 0.96rem;
+      outline: none;
+    }
+
+    .msg-input::placeholder {
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    .send-circle-btn {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, #00f59b, #00e5ff);
+      color: #061422;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 6px 18px rgba(0, 229, 255, 0.35);
+      transition: transform 0.14s;
+    }
+
+    .send-circle-btn:active { transform: scale(0.9); }
+
+    .photo-circle-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 78, 205, 0.22);
+      color: #ff9be4;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ================= VIEW-ONCE MODAL ================= */
+    .modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(5, 6, 15, 0.95);
+      z-index: 60;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay img {
+      max-width: 100%;
+      max-height: 75%;
+      border-radius: 18px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .timer-bar-wrap {
+      width: 80%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+      margin-top: 18px;
+      overflow: hidden;
+    }
+
+    .timer-bar-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #ff4ecd, #00e5ff);
+      transition: width 5s linear;
+    }
+
+    /* ================= CALL OVERLAY (VOICE & VIDEO) ================= */
+    #call-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, #120b2e, #1d2b64, #0c1821);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 36px 20px 34px;
+    }
+
+    #remote-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+      background: #000;
+    }
+
+    #local-video {
+      position: absolute;
+      top: 20px;
+      right: 16px;
+      width: 108px;
+      height: 152px;
+      border-radius: 16px;
+      object-fit: cover;
+      z-index: 3;
+      border: 2px solid rgba(255, 255, 255, 0.45);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      background: #111;
+    }
+
+    .call-top-info {
+      position: relative;
+      z-index: 4;
+      text-align: center;
+      margin-top: 20px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+    }
+
+    .call-avatar-big {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      margin: 0 auto 14px;
+      background: linear-gradient(135deg, #ff4ecd, #00e5ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.4rem;
+      font-weight: 700;
+      box-shadow: 0 0 36px rgba(0, 229, 255, 0.5);
+      animation: floatPulse 2s infinite;
+    }
+
+    .call-controls {
+      position: relative;
+      z-index: 4;
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      background: rgba(10, 12, 26, 0.65);
+      backdrop-filter: blur(12px);
+      padding: 14px 22px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .call-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: none;
+      font-size: 1.25rem;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.16);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s;
+    }
+
+    .call-btn:active { transform: scale(0.9); }
+    .call-btn.accept { background: #00e676; color: #051b11; }
+    .call-btn.end { background: #ff3b5c; color: #fff; }
+    .call-btn.muted { background: #fff; color: #111; }
+
+    /* Toast */
+    .toast {
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-80px);
+      background: rgba(15, 20, 42, 0.95);
+      border: 1px solid var(--accent-2);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 0.84rem;
+      z-index: 100;
+      transition: transform 0.3s ease;
+      white-space: nowrap;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <div id="toast" class="toast">Alert</div>
+
+    <!-- ================= 1. STEALTH CALCULATOR SCREEN ================= -->
+    <div id="calc-screen" class="screen">
+      <div class="calc-brand"><i class="fa-solid fa-calculator"></i> QuickCalc</div>
+      <div class="calc-display-wrap">
+        <div id="calc-expr" class="calc-expr"></div>
+        <div id="calc-val" class="calc-value">0</div>
+      </div>
+      <div class="calc-grid">
+        <button class="calc-btn fn" onclick="calcClear()">C</button>
+        <button class="calc-btn fn" onclick="calcBack()"><i class="fa-solid fa-delete-left"></i></button>
+        <button class="calc-btn op" onclick="calcAdd('%')">%</button>
+        <button class="calc-btn op" onclick="calcAdd('/')">÷</button>
+
+        <button class="calc-btn" onclick="calcAdd('7')">7</button>
+        <button class="calc-btn" onclick="calcAdd('8')">8</button>
+        <button class="calc-btn" onclick="calcAdd('9')">9</button>
+        <button class="calc-btn op" onclick="calcAdd('*')">×</button>
+
+        <button class="calc-btn" onclick="calcAdd('4')">4</button>
+        <button class="calc-btn" onclick="calcAdd('5')">5</button>
+        <button class="calc-btn" onclick="calcAdd('6')">6</button>
+        <button class="calc-btn op" onclick="calcAdd('-')">−</button>
+
+        <button class="calc-btn" onclick="calcAdd('1')">1</button>
+        <button class="calc-btn" onclick="calcAdd('2')">2</button>
+        <button class="calc-btn" onclick="calcAdd('3')">3</button>
+        <button class="calc-btn op" onclick="calcAdd('+')">+</button>
+
+        <button class="calc-btn zero" onclick="calcAdd('0')">0</button>
+        <button class="calc-btn" onclick="calcAdd('.')">.</button>
+        <button class="calc-btn eq" onclick="calcEqual()">=</button>
+      </div>
+    </div>
+
+    <!-- ================= 2. PRIVATE ROOM LOGIN SCREEN ================= -->
+    <div id="login-screen" class="screen hidden">
+      <div class="vault-badge"><i class="fa-solid fa-user-secret"></i></div>
+      <div class="login-title">Secret Live Room</div>
+      <div class="login-sub">Zero History • Max 2 Log • Wi-Fi Voice & Video</div>
+
+      <input id="inp-name" class="input-box" type="text" placeholder="Tumhara Nickname (optional)" maxlength="18" />
+      <input id="inp-room" class="input-box" type="text" placeholder="Secret Room Name (e.g. math101)" maxlength="24" />
+      <input id="inp-pin" class="input-box" type="password" inputmode="numeric" placeholder="4-Digit Secret PIN (e.g. 4829)" maxlength="8" />
+
+      <div id="login-error" class="error-msg"></div>
+      <button class="primary-btn" onclick="joinVault()"><i class="fa-solid fa-lock-open"></i> Enter Private Room</button>
+      <div class="back-calc-link" onclick="showScreen('calc-screen')"><i class="fa-solid fa-arrow-left"></i> Wapas Calculator pe jao</div>
+    </div>
+
+    <!-- ================= 3. WHATSAPP-STYLE CHAT SCREEN ================= -->
+    <div id="chat-screen" class="screen hidden">
+      <div class="chat-header">
+        <div class="partner-info">
+          <div class="avatar-wrap">
+            <div id="partner-avatar" class="avatar">P</div>
+            <div id="status-dot" class="status-dot"></div>
+          </div>
+          <div class="partner-text">
+            <div id="partner-name" class="partner-name">Waiting...</div>
+            <div id="partner-status" class="partner-status">Partner Offline</div>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button class="circle-icon-btn btn-voice" title="Voice Call" onclick="initiateCall('audio')">
+            <i class="fa-solid fa-phone"></i>
+          </button>
+          <button class="circle-icon-btn btn-video" title="Video Call" onclick="initiateCall('video')">
+            <i class="fa-solid fa-video"></i>
+          </button>
+          <button class="circle-icon-btn btn-knock" title="Knock Partner" onclick="sendKnock()">
+            <i class="fa-solid fa-bell"></i>
+          </button>
+          <button class="circle-icon-btn btn-panic" title="Panic Escape" onclick="triggerPanic()">
+            <i class="fa-solid fa-shield-halved"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="privacy-bar">
+        <span id="room-label">Room: ---</span>
+        <div style="display:flex; gap:6px;">
+          <button id="destruct-toggle" class="pill-toggle" onclick="toggleAutoDestruct()">
+            <i class="fa-solid fa-fire"></i> 30s Auto-Delete: OFF
+          </button>
+          <button id="blur-toggle" class="pill-toggle" onclick="toggleBlur()">
+            <i class="fa-solid fa-eye-slash"></i> Blur
+          </button>
+        </div>
+      </div>
+
+      <div id="messages-area" class="messages-area"></div>
+
+      <div class="chat-input-bar">
+        <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="handlePhotoSelect(event)" />
+        <button class="photo-circle-btn" title="Send View-Once Photo" onclick="document.getElementById('photo-input').click()">
+          <i class="fa-solid fa-camera"></i>
+        </button>
+        <input id="msg-input" class="msg-input" type="text" placeholder="Message likho..." autocomplete="off" />
+        <button class="send-circle-btn" onclick="sendMessage()">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- ================= VIEW-ONCE PHOTO MODAL ================= -->
+    <div id="photo-modal" class="modal-overlay hidden">
+      <img id="modal-img" src="" alt="View Once" />
+      <div class="timer-bar-wrap"><div id="timer-bar" class="timer-bar-fill"></div></div>
+      <div style="margin-top:12px; font-size:0.85rem; color:#ff9be4;">5 second mein photo gayab ho jayegi</div>
+    </div>
+
+    <!-- ================= VOICE & VIDEO CALL OVERLAY ================= -->
+    <div id="call-overlay" class="hidden">
+      <video id="remote-video" autoplay playsinline></video>
+      <video id="local-video" autoplay playsinline muted></video>
+
+      <div id="call-top-info" class="call-top-info">
+        <div id="call-avatar" class="call-avatar-big">P</div>
+        <h2 id="call-peer-name">Partner</h2>
+        <p id="call-state-text" style="color:#8cf4ff; margin-top:6px;">Calling...</p>
+      </div>
+
+      <!-- Incoming Controls -->
+      <div id="incoming-controls" class="call-controls hidden">
+        <button class="call-btn end" onclick="rejectCall()"><i class="fa-solid fa-phone-slash"></i></button>
+        <button class="call-btn accept" onclick="acceptCall()"><i class="fa-solid fa-phone"></i></button>
+      </div>
+
+      <!-- Active Call Controls -->
+      <div id="active-controls" class="call-controls hidden">
+        <button id="btn-mute" class="call-btn" onclick="toggleMute()"><i class="fa-solid fa-microphone"></i></button>
+        <button id="btn-cam" class="call-btn" onclick="toggleCamera()"><i class="fa-solid fa-video"></i></button>
+        <button id="btn-flip" class="call-btn" onclick="switchCamera()"><i class="fa-solid fa-camera-rotate"></i></button>
+        <button class="call-btn end" onclick="endCall(true)"><i class="fa-solid fa-phone-slash"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ================= CONFIG =================
+    const SECRET_CALC_CODE = "143"; // Calculator mein 143 type karke '=' dabane pe Vault khulega
+    const PANIC_REDIRECT_URL = "https://en.wikipedia.org/wiki/Engineering_physics";
+
+    const socket = io();
+    let mySid = null;
+    let currentRoom = null;
+    let partnerOnline = false;
+    let partnerName = "Partner";
+    let autoDestructOn = false;
+    let typingTimeout = null;
+
+    // WebRTC State
+    let peerConn = null;
+    let localStream = null;
+    let currentCallType = 'video';
+    let currentFacing = 'user';
+    let isMuted = false;
+    let isCamOff = false;
+    let pendingIceCandidates = [];
+    const rtcConfig = {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' }
+      ]
+    };
+
+    // ================= SOUND HELPER (No external MP3 needed) =================
+    function playTone(freq = 660, duration = 0.14) {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2600);
+    }
+
+    function showScreen(id) {
+      ['calc-screen', 'login-screen', 'chat-screen'].forEach(s => {
+        document.getElementById(s).classList.toggle('hidden', s !== id);
+      });
+    }
+
+    // ================= 1. CALCULATOR LOGIC =================
+    let calcStr = "";
+
+    function updateCalcUI(res = null) {
+      document.getElementById('calc-val').textContent = res !== null ? res : (calcStr || "0");
+    }
+
+    function calcAdd(ch) {
+      calcStr += ch;
+      updateCalcUI();
+    }
+
+    function calcClear() {
+      calcStr = "";
+      document.getElementById('calc-expr').textContent = "";
+      updateCalcUI("0");
+    }
+
+    function calcBack() {
+      calcStr = calcStr.slice(0, -1);
+      updateCalcUI();
+    }
+
+    function calcEqual() {
+      // Secret Unlock Check
+      if (calcStr.trim() === SECRET_CALC_CODE) {
+        calcClear();
+        showScreen('login-screen');
+        return;
+      }
+      if (!calcStr) return;
+      try {
+        if (!/^[0-9+\-*/.%() ]+$/.test(calcStr)) throw new Error();
+        const ans = Function('"use strict";return (' + calcStr + ')')();
+        document.getElementById('calc-expr').textContent = calcStr + " =";
+        calcStr = String(Number.isFinite(ans) ? +parseFloat(ans).toFixed(6) : "Error");
+        updateCalcUI();
+      } catch {
+        updateCalcUI("Error");
+        calcStr = "";
+      }
+    }
+
+    // ================= 2. ROOM JOIN & NOTIFICATIONS =================
+    function requestNotifPermission() {
+      if ("Notification" in window && Notification.permission === "default") {
+        Notification.requestPermission();
+      }
+    }
+
+    function joinVault() {
+      const name = document.getElementById('inp-name').value.trim() || "Partner";
+      const room = document.getElementById('inp-room').value.trim();
+      const pin = document.getElementById('inp-pin').value.trim();
+      document.getElementById('login-error').textContent = "";
+
+      requestNotifPermission();
+      socket.emit('join_vault', { name, room, pin });
+    }
+
+    socket.on('join_error', (data) => {
+      document.getElementById('login-error').textContent = data.msg;
+    });
+
+    socket.on('join_success', (data) => {
+      mySid = data.mySid;
+      currentRoom = data.room;
+      document.getElementById('room-label').textContent = "Room: " + data.room;
+      document.getElementById('messages-area').innerHTML = "";
+      addSystemNote("Private room active • Zero history mode");
+      showScreen('chat-screen');
+    });
+
+    // ================= 3. LIVE STATUS & TYPING =================
+    socket.on('room_status', (data) => {
+      const others = data.users.filter(u => u.sid !== mySid);
+      const dot = document.getElementById('status-dot');
+      const statusEl = document.getElementById('partner-status');
+      const nameEl = document.getElementById('partner-name');
+      const avatarEl = document.getElementById('partner-avatar');
+
+      if (others.length > 0) {
+        if (!partnerOnline) {
+          playTone(880, 0.12);
+          showToast(others[0].name + " abhi Live aaye hain!");
+        }
+        partnerOnline = true;
+        partnerName = others[0].name;
+        nameEl.textContent = partnerName;
+        avatarEl.textContent = partnerName.charAt(0).toUpperCase();
+        dot.classList.add('live');
+        statusEl.textContent = "Live • Online";
+        statusEl.className = "partner-status live";
+      } else {
+        partnerOnline = false;
+        dot.classList.remove('live');
+        nameEl.textContent = "Waiting for Partner...";
+        avatarEl.textContent = "?";
+        statusEl.textContent = "Offline • Knock bhej sakte ho";
+        statusEl.className = "partner-status";
+      }
+    });
+
+    const msgInput = document.getElementById('msg-input');
+    msgInput.addEventListener('input', () => {
+      socket.emit('typing', { isTyping: true });
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        socket.emit('typing', { isTyping: false });
+      }, 1100);
+    });
+
+    msgInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    socket.on('partner_typing', (data) => {
+      const statusEl = document.getElementById('partner-status');
+      if (!partnerOnline) return;
+      if (data.isTyping) {
+        statusEl.textContent = "Typing...";
+        statusEl.className = "partner-status typing";
+      } else {
+        statusEl.textContent = "Live • Online";
+        statusEl.className = "partner-status live";
+      }
+    });
+
+    // ================= 4. CHAT MESSAGES & AUTO-DESTRUCT =================
+    function toggleAutoDestruct() {
+      autoDestructOn = !autoDestructOn;
+      const btn = document.getElementById('destruct-toggle');
+      btn.classList.toggle('active', autoDestructOn);
+      btn.innerHTML = `<i class="fa-solid fa-fire"></i> 30s Auto-Delete: ${autoDestructOn ? 'ON' : 'OFF'}`;
+    }
+
+    function toggleBlur() {
+      const area = document.getElementById('messages-area');
+      const btn = document.getElementById('blur-toggle');
+      const blurred = area.classList.toggle('blurred');
+      btn.classList.toggle('active', blurred);
+    }
+
+    function sendMessage() {
+      const text = msgInput.value.trim();
+      if (!text) return;
+      socket.emit('send_message', { text, autoDestruct: autoDestructOn });
+      socket.emit('typing', { isTyping: false });
+      msgInput.value = "";
+    }
+
+    function addSystemNote(text) {
+      const area = document.getElementById('messages-area');
+      const div = document.createElement('div');
+      div.className = 'sys-pill';
+      div.textContent = text;
+      area.appendChild(div);
+      area.scrollTop = area.scrollHeight;
+    }
+
+    socket.on('system_note', (data) => addSystemNote(data.msg));
+
+    socket.on('receive_message', (data) => {
+      const area = document.getElementById('messages-area');
+      const isMe = data.senderSid === mySid;
+
+      const bubble = document.createElement('div');
+      bubble.className = 'msg-bubble ' + (isMe ? 'me' : 'them');
+
+      const textNode = document.createElement('div');
+      textNode.textContent = data.text;
+      bubble.appendChild(textNode);
+
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const meta = document.createElement('div');
+      meta.className = 'msg-meta';
+      meta.innerHTML = `${data.autoDestruct ? '<i class="fa-solid fa-fire"></i> ' : ''}${data.fromRam ? 'RAM • ' : ''}${timeStr}`;
+      bubble.appendChild(meta);
+
+      area.appendChild(bubble);
+      area.scrollTop = area.scrollHeight;
+
+      if (!isMe) {
+        playTone(540, 0.1);
+        if (document.hidden && "Notification" in window && Notification.permission === "granted") {
+          new Notification("Study Notes Update", { body: "Naya chapter summary available hai." });
+        }
+      }
+
+      if (data.autoDestruct) {
+        setTimeout(() => {
+          bubble.style.transition = 'opacity 0.5s, transform 0.5s';
+          bubble.style.opacity = '0';
+          bubble.style.transform = 'scale(0.85)';
+          setTimeout(() => bubble.remove(), 500);
+        }, 30000);
+      }
+    });
+
+    // ================= 5. VIEW-ONCE PHOTO (Client Compressed) =================
+    function handlePhotoSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      event.target.value = "";
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxW = 720;
+          const scale = Math.min(1, maxW / img.width);
+          canvas.width = img.width * scale;
+          canvas.height = img.height * scale;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const compressed = canvas.toDataURL('image/jpeg', 0.72);
+          socket.emit('send_view_once', { image: compressed });
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    socket.on('receive_view_once', (data) => {
+      const area = document.getElementById('messages-area');
+      const isMe = data.senderSid === mySid;
+      const bubble = document.createElement('div');
+      bubble.className = 'msg-bubble ' + (isMe ? 'me' : 'them');
+
+      const card = document.createElement('div');
+      card.className = 'view-once-card';
+      card.innerHTML = `<i class="fa-solid fa-circle-dot"></i> <span>${isMe ? 'View-Once Photo bheji' : 'Tap to View Photo (1-Time)'}</span>`;
+
+      if (!isMe) {
+        let imgPayload = data.image;
+        card.onclick = () => {
+          if (!imgPayload) return;
+          openViewOnceModal(imgPayload);
+          imgPayload = null;
+          card.classList.add('opened');
+          card.innerHTML = `<i class="fa-solid fa-fire"></i> <span>Photo viewed & destroyed</span>`;
+        };
+      }
+
+      bubble.appendChild(card);
+      area.appendChild(bubble);
+      area.scrollTop = area.scrollHeight;
+      if (!isMe) playTone(620, 0.12);
+    });
+
+    function openViewOnceModal(src) {
+      const modal = document.getElementById('photo-modal');
+      const img = document.getElementById('modal-img');
+      const bar = document.getElementById('timer-bar');
+      img.src = src;
+      bar.style.transition = 'none';
+      bar.style.width = '100%';
+      modal.classList.remove('hidden');
+
+      requestAnimationFrame(() => {
+        bar.style.transition = 'width 5s linear';
+        bar.style.width = '0%';
+      });
+
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        img.src = "";
+      }, 5100);
+    }
+
+    // ================= 6. DISGUISED KNOCK & PANIC =================
+    function sendKnock() {
+      socket.emit('knock_partner');
+      showToast("Disguised Knock alert bhej diya gaya!");
+    }
+
+    socket.on('knock_received', (data) => {
+      playTone(760, 0.2);
+      if (navigator.vibrate) navigator.vibrate([160, 80, 160]);
+      showToast("Partner Knock kar raha hai!");
+      if ("Notification" in window && Notification.permission === "granted") {
+        new Notification("Study Reminder", { body: data.msg });
+      }
+    });
+
+    function triggerPanic() {
+      endCall(true);
+      socket.emit('leave_vault');
+      document.getElementById('messages-area').innerHTML = "";
+      window.location.replace(PANIC_REDIRECT_URL);
+    }
+
+    // ================= 7. WEBRTC VOICE & VIDEO CALL =================
+    async function getMedia(type) {
+      const constraints = {
+        audio: true,
+        video: type === 'video' ? { facingMode: currentFacing } : false
+      };
+      return await navigator.mediaDevices.getUserMedia(constraints);
+    }
+
+    function createPeerConnection() {
+      const pc = new RTCPeerConnection(rtcConfig);
+      pc.onicecandidate = (e) => {
+        if (e.candidate) socket.emit('webrtc_ice', { candidate: e.candidate });
+      };
+      pc.ontrack = (e) => {
+        const remoteVideo = document.getElementById('remote-video');
+        remoteVideo.srcObject = e.streams[0];
+      };
+      if (localStream) {
+        localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
+      }
+      return pc;
+    }
+
+    function showCallUI(stateText, showIncoming, callType) {
+      const overlay = document.getElementById('call-overlay');
+      overlay.classList.remove('hidden');
+      document.getElementById('call-peer-name').textContent = partnerName;
+      document.getElementById('call-avatar').textContent = partnerName.charAt(0).toUpperCase();
+      document.getElementById('call-state-text').textContent = stateText;
+
+      document.getElementById('incoming-controls').classList.toggle('hidden', !showIncoming);
+      document.getElementById('active-controls').classList.toggle('hidden', showIncoming);
+
+      const isVid = callType === 'video';
+      document.getElementById('remote-video').style.display = isVid ? 'block' : 'none';
+      document.getElementById('local-video').style.display = isVid ? 'block' : 'none';
+      document.getElementById('btn-cam').style.display = isVid ? 'flex' : 'none';
+      document.getElementById('btn-flip').style.display = isVid ? 'flex' : 'none';
+    }
+
+    async function initiateCall(type) {
+      if (!partnerOnline) {
+        showToast("Partner abhi offline hai! Pehle Knock bhejo.");
+        return;
+      }
+      currentCallType = type;
+      try {
+        localStream = await getMedia(type);
+        document.getElementById('local-video').srcObject = localStream;
+        showCallUI(type === 'video' ? "Video Calling..." : "Voice Calling...", false, type);
+        socket.emit('call_request', { callType: type });
+      } catch (err) {
+        showToast("Camera/Mic permission allow karo (HTTPS zaroori hai)");
+      }
+    }
+
+    socket.on('incoming_call', (data) => {
+      currentCallType = data.callType;
+      partnerName = data.callerName || partnerName;
+      playTone(820, 0.25);
+      if (navigator.vibrate) navigator.vibrate([300, 150, 300]);
+      showCallUI(
+        data.callType === 'video' ? "Incoming Video Call..." : "Incoming Voice Call...",
+        true,
+        data.callType
+      );
+    });
+
+    async function acceptCall() {
+      try {
+        localStream = await getMedia(currentCallType);
+        document.getElementById('local-video').srcObject = localStream;
+        peerConn = createPeerConnection();
+        showCallUI("Connected • Live", false, currentCallType);
+        if (currentCallType === 'video') {
+          document.getElementById('call-top-info').style.opacity = '0.35';
+        }
+        socket.emit('call_accept', { callType: currentCallType });
+      } catch (err) {
+        showToast("Camera/Mic access fail hua!");
+        rejectCall();
+      }
+    }
+
+    function rejectCall() {
+      socket.emit('call_reject');
+      endCall(false);
+    }
+
+    socket.on('call_rejected', () => {
+      showToast("Partner ne call cut kar diya.");
+      endCall(false);
+    });
+
+    socket.on('call_accepted', async () => {
+      peerConn = createPeerConnection();
+      const offer = await peerConn.createOffer();
+      await peerConn.setLocalDescription(offer);
+      document.getElementById('call-state-text').textContent = "Connected • Live";
+      if (currentCallType === 'video') {
+        document.getElementById('call-top-info').style.opacity = '0.35';
+      }
+      socket.emit('webrtc_offer', { offer });
+    });
+
+    socket.on('webrtc_offer', async (data) => {
+      if (!peerConn) peerConn = createPeerConnection();
+      await peerConn.setRemoteDescription(new RTCSessionDescription(data.offer));
+      for (const c of pendingIceCandidates) {
+        await peerConn.addIceCandidate(new RTCIceCandidate(c));
+      }
+      pendingIceCandidates = [];
+      const answer = await peerConn.createAnswer();
+      await peerConn.setLocalDescription(answer);
+      socket.emit('webrtc_answer', { answer });
+    });
+
+    socket.on('webrtc_answer', async (data) => {
+      if (peerConn) {
+        await peerConn.setRemoteDescription(new RTCSessionDescription(data.answer));
+        for (const c of pendingIceCandidates) {
+          await peerConn.addIceCandidate(new RTCIceCandidate(c));
+        }
+        pendingIceCandidates = [];
+      }
+    });
+
+    socket.on('webrtc_ice', async (data) => {
+      if (peerConn && peerConn.remoteDescription) {
+        try { await peerConn.addIceCandidate(new RTCIceCandidate(data.candidate)); } catch {}
+      } else {
+        pendingIceCandidates.push(data.candidate);
+      }
+    });
+
+    socket.on('call_ended', () => endCall(false));
+
+    function endCall(notifyPeer) {
+      if (notifyPeer) socket.emit('call_end');
+      if (peerConn) { peerConn.close(); peerConn = null; }
+      if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+      document.getElementById('remote-video').srcObject = null;
+      document.getElementById('local-video').srcObject = null;
+      document.getElementById('call-overlay').classList.add('hidden');
+      document.getElementById('call-top-info').style.opacity = '1';
+      pendingIceCandidates = [];
+      isMuted = false;
+      isCamOff = false;
+      document.getElementById('btn-mute').classList.remove('muted');
+      document.getElementById('btn-cam').classList.remove('muted');
+    }
+
+    function toggleMute() {
+      if (!localStream) return;
+      isMuted = !isMuted;
+      localStream.getAudioTracks().forEach(t => t.enabled = !isMuted);
+      const btn = document.getElementById('btn-mute');
+      btn.classList.toggle('muted', isMuted);
+      btn.innerHTML = isMuted ? '<i class="fa-solid fa-microphone-slash"></i>' : '<i class="fa-solid fa-microphone"></i>';
+    }
+
+    function toggleCamera() {
+      if (!localStream) return;
+      isCamOff = !isCamOff;
+      localStream.getVideoTracks().forEach(t => t.enabled = !isCamOff);
+      const btn = document.getElementById('btn-cam');
+      btn.classList.toggle('muted', isCamOff);
+      btn.innerHTML = isCamOff ? '<i class="fa-solid fa-video-slash"></i>' : '<i class="fa-solid fa-video"></i>';
+    }
+
+    async function switchCamera() {
+      if (!localStream || currentCallType !== 'video') return;
+      currentFacing = currentFacing === 'user' ? 'environment' : 'user';
+      try {
+        const newStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: currentFacing }, audio: false });
+        const newTrack = newStream.getVideoTracks()[0];
+        const oldTrack = localStream.getVideoTracks()[0];
+        if (peerConn) {
+          const sender = peerConn.getSenders().find(s => s.track && s.track.kind === 'video');
+          if (sender) await sender.replaceTrack(newTrack);
+        }
+        oldTrack.stop();
+        localStream.removeTrack(oldTrack);
+        localStream.addTrack(newTrack);
+        document.getElementById('local-video').srcObject = localStream;
+      } catch {
+        showToast("Camera switch supported nahi hai is device pe");
+      }
+    }
+  </script>
+</body>
+</html>
