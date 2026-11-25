@@ -1,19 +1,24 @@
 import time
+import uuid
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit, join_room, leave_room
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ghost-vault-super-secret-key'
 
-# async_mode='threading' Python ke saare versions aur Render pe bina error ke chalta hai
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading", max_http_buffer_size=5 * 1024 * 1024)
+# 25 MB buffer taaki har type ki file (PDF, Video, Photo, ZIP) smoothly jaye
+socketio = SocketIO(
+    app,
+    cors_allowed_origins="*",
+    async_mode="threading",
+    max_http_buffer_size=25 * 1024 * 1024
+)
 
-# Pure RAM storage (Server restart ya users leave hote hi sab gayab)
-# rooms = { room_id: { 'pin': str, 'users': { sid: name }, 'pending': [ {text, sender, ts} ] } }
+# Pure RAM storage (Zero database)
 rooms = {}
 sid_to_room = {}
 
-PENDING_TTL = 600  # Offline RAM message max 10 minute tak rahega, padhte hi delete
+PENDING_TTL = 600  # Offline RAM text max 10 min tak rahega, padhte hi delete
 
 
 def cleanup_expired_pending(room_id):
@@ -51,7 +56,6 @@ def handle_join(data):
         emit('join_error', {'msg': 'Room name aur kam se kam 4-digit PIN daalo!'})
         return
 
-    # Agar naya room hai toh create karo
     if room_id not in rooms:
         rooms[room_id] = {
             'pin': pin,
@@ -61,17 +65,14 @@ def handle_join(data):
 
     room = rooms[room_id]
 
-    # PIN check
     if room['pin'] != pin:
         emit('join_error', {'msg': 'Galat PIN hai! Sahi secret PIN enter karo.'})
         return
 
-    # Strict 2-person room lock
     if len(room['users']) >= 2 and sid not in room['users']:
         emit('join_error', {'msg': 'Room Locked hai! Is room mein already 2 log baat kar rahe hain.'})
         return
 
-    # Join room
     join_room(room_id)
     room['users'][sid] = name
     sid_to_room[sid] = room_id
@@ -86,7 +87,7 @@ def handle_join(data):
 
     broadcast_room_status(room_id)
 
-    # Agar partner ne offline RAM message chhoda tha toh deliver karo aur turant RAM se udao
+    # Pending RAM messages deliver karke turant wipe karo
     if room['pending']:
         delivered = []
         remaining = []
@@ -98,11 +99,14 @@ def handle_join(data):
         if delivered:
             for msg in delivered:
                 emit('receive_message', {
+                    'id': msg['id'],
                     'text': msg['text'],
                     'sender': msg['sender'],
                     'senderSid': msg['sender_sid'],
                     'fromRam': True,
-                    'autoDestruct': msg.get('autoDestruct', False)
+                    'autoDestruct': msg.get('autoDestruct', False),
+                    'oneTime': False,
+                    'edited': msg.get('edited', False)
                 })
             room['pending'] = remaining
             emit('system_note', {'msg': 'Temporary RAM message deliver hoke server se delete ho gaya.'}, to=room_id)
@@ -117,61 +121,112 @@ def handle_message(data):
 
     text = str(data.get('text', '')).strip()
     auto_destruct = bool(data.get('autoDestruct', False))
+    one_time = bool(data.get('oneTime', False))
     if not text:
         return
 
     room = rooms[room_id]
     sender_name = room['users'].get(sid, 'Partner')
+    msg_id = uuid.uuid4().hex[:10]
+
+    if one_time and len(room['users']) < 2:
+        emit('system_note', {'msg': 'Partner offline hai! One-Time message sirf live hone par bhej sakte ho.'})
+        return
 
     if len(room['users']) >= 2:
-        # Dono live hain -> Direct relay, ZERO storage
         emit('receive_message', {
+            'id': msg_id,
             'text': text,
             'sender': sender_name,
             'senderSid': sid,
             'fromRam': False,
-            'autoDestruct': auto_destruct
+            'autoDestruct': auto_destruct,
+            'oneTime': one_time,
+            'edited': False
         }, to=room_id)
     else:
-        # Partner offline hai -> Temporary RAM buffer (max 10 min, read hote hi wipe)
         cleanup_expired_pending(room_id)
         room['pending'].append({
+            'id': msg_id,
             'text': text,
             'sender': sender_name,
             'sender_sid': sid,
             'ts': time.time(),
-            'autoDestruct': auto_destruct
+            'autoDestruct': auto_destruct,
+            'edited': False
         })
         emit('receive_message', {
+            'id': msg_id,
             'text': text,
             'sender': sender_name,
             'senderSid': sid,
             'fromRam': True,
-            'autoDestruct': auto_destruct
+            'autoDestruct': auto_destruct,
+            'oneTime': False,
+            'edited': False
         })
 
 
-@socketio.on('send_view_once')
-def handle_view_once(data):
+@socketio.on('edit_message')
+def handle_edit_message(data):
     sid = request.sid
     room_id = sid_to_room.get(sid)
     if not room_id or room_id not in rooms:
         return
 
-    image_data = data.get('image')
-    if not image_data:
+    msg_id = str(data.get('msgId', '')).strip()
+    new_text = str(data.get('newText', '')).strip()
+    if not msg_id or not new_text:
         return
 
-    # View-once photo sirf live partner ko jayegi, RAM mein kabhi store nahi hogi
+    # Agar message abhi RAM pending buffer mein hai toh wahan bhi update karo
+    for m in rooms[room_id]['pending']:
+        if m['id'] == msg_id and m['sender_sid'] == sid:
+            m['text'] = new_text
+            m['edited'] = True
+
+    emit('message_edited', {
+        'msgId': msg_id,
+        'newText': new_text,
+        'editorSid': sid
+    }, to=room_id)
+
+
+@socketio.on('send_file')
+def handle_send_file(data):
+    sid = request.sid
+    room_id = sid_to_room.get(sid)
+    if not room_id or room_id not in rooms:
+        return
+
+    file_data = data.get('fileData')
+    file_name = str(data.get('fileName', 'file')).strip() or 'file'
+    file_type = str(data.get('fileType', 'application/octet-stream')).strip()
+    file_size = int(data.get('fileSize', 0))
+    one_time = bool(data.get('oneTime', False))
+    auto_destruct = bool(data.get('autoDestruct', False))
+
+    if not file_data:
+        return
+
+    # Files RAM mein store nahi hongi — dono live hone par direct relay hongi
     if len(rooms[room_id]['users']) < 2:
-        emit('system_note', {'msg': 'Partner offline hai! View-Once photo sirf live hone par bhej sakte ho.'})
+        emit('system_note', {'msg': 'Partner offline hai! Photo ya file bhejne ke liye dono ka live hona zaroori hai.'})
         return
 
     sender_name = rooms[room_id]['users'].get(sid, 'Partner')
-    emit('receive_view_once', {
-        'image': image_data,
+    file_id = uuid.uuid4().hex[:10]
+
+    emit('receive_file', {
+        'id': file_id,
+        'fileData': file_data,
+        'fileName': file_name,
+        'fileType': file_type,
+        'fileSize': file_size,
         'sender': sender_name,
-        'senderSid': sid
+        'senderSid': sid,
+        'oneTime': one_time,
+        'autoDestruct': auto_destruct
     }, to=room_id)
 
 
@@ -266,7 +321,6 @@ def handle_disconnect():
         broadcast_room_status(room_id)
 
         cleanup_expired_pending(room_id)
-        # Agar room khaali hai aur koi pending RAM message nahi hai toh poora room memory se delete
         if len(rooms[room_id]['users']) == 0 and len(rooms[room_id]['pending']) == 0:
             rooms.pop(room_id, None)
 
