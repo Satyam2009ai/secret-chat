@@ -122,6 +122,7 @@
       word-break: break-all;
       background: linear-gradient(90deg, #fff, #b8f2ff);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
@@ -146,32 +147,16 @@
       justify-content: center;
     }
 
-    .calc-btn:active {
-      transform: scale(0.9);
-    }
-
-    .calc-btn.op {
-      background: rgba(0, 229, 255, 0.18);
-      color: #70f3ff;
-    }
-
-    .calc-btn.fn {
-      background: rgba(255, 78, 205, 0.18);
-      color: #ff9be4;
-    }
-
+    .calc-btn:active { transform: scale(0.9); }
+    .calc-btn.op { background: rgba(0, 229, 255, 0.18); color: #70f3ff; }
+    .calc-btn.fn { background: rgba(255, 78, 205, 0.18); color: #ff9be4; }
     .calc-btn.eq {
       background: linear-gradient(135deg, #ff4ecd, #00e5ff);
       color: #0b0d1f;
       font-weight: 700;
       box-shadow: 0 8px 22px rgba(0, 229, 255, 0.35);
     }
-
-    .calc-btn.zero {
-      grid-column: span 2;
-      aspect-ratio: auto;
-      border-radius: 999px;
-    }
+    .calc-btn.zero { grid-column: span 2; aspect-ratio: auto; border-radius: 999px; }
 
     /* ================= 2. ROOM LOGIN ================= */
     #login-screen {
@@ -206,6 +191,7 @@
       font-weight: 700;
       background: linear-gradient(90deg, #ff79dc, #5cf2ff);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
@@ -233,9 +219,7 @@
       box-shadow: 0 0 16px rgba(0, 229, 255, 0.25);
     }
 
-    .input-box::placeholder {
-      color: rgba(255, 255, 255, 0.45);
-    }
+    .input-box::placeholder { color: rgba(255, 255, 255, 0.45); }
 
     .primary-btn {
       width: 100%;
@@ -251,30 +235,12 @@
       transition: transform 0.15s ease;
     }
 
-    .primary-btn:active {
-      transform: scale(0.96);
-    }
-
-    .error-msg {
-      color: #ff7a90;
-      font-size: 0.88rem;
-      text-align: center;
-      min-height: 20px;
-    }
-
-    .back-calc-link {
-      text-align: center;
-      color: var(--text-dim);
-      font-size: 0.85rem;
-      cursor: pointer;
-      margin-top: 6px;
-    }
+    .primary-btn:active { transform: scale(0.96); }
+    .error-msg { color: #ff7a90; font-size: 0.88rem; text-align: center; min-height: 20px; }
+    .back-calc-link { text-align: center; color: var(--text-dim); font-size: 0.85rem; cursor: pointer; margin-top: 6px; }
 
     /* ================= 3. WHATSAPP-STYLE CHAT SCREEN ================= */
-    #chat-screen {
-      display: flex;
-      flex-direction: column;
-    }
+    #chat-screen { display: flex; flex-direction: column; }
 
     .chat-header {
       padding: 12px 14px;
@@ -287,19 +253,8 @@
       z-index: 10;
     }
 
-    .partner-info {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      min-width: 0;
-    }
-
-    .avatar-wrap {
-      position: relative;
-      width: 44px;
-      height: 44px;
-      flex-shrink: 0;
-    }
+    .partner-info { display: flex; align-items: center; gap: 11px; min-width: 0; }
+    .avatar-wrap { position: relative; width: 44px; height: 44px; flex-shrink: 0; }
 
     .avatar {
       width: 44px;
@@ -326,52 +281,19 @@
       transition: background 0.3s;
     }
 
-    .status-dot.live {
-      background: #00f59b;
-      box-shadow: 0 0 10px #00f59b;
-    }
-
-    .partner-text {
-      min-width: 0;
-    }
-
-    .partner-name {
-      font-weight: 700;
-      font-size: 1rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .partner-status {
-      font-size: 0.78rem;
-      color: var(--text-dim);
-      margin-top: 2px;
-      transition: color 0.2s;
-    }
-
-    .partner-status.live {
-      color: #00f59b;
-      font-weight: 600;
-    }
-
-    .partner-status.typing {
-      color: #00e5ff;
-      font-weight: 600;
-      animation: pulseText 1s infinite;
-    }
+    .status-dot.live { background: #00f59b; box-shadow: 0 0 10px #00f59b; }
+    .partner-text { min-width: 0; }
+    .partner-name { font-weight: 700; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .partner-status { font-size: 0.78rem; color: var(--text-dim); margin-top: 2px; transition: color 0.2s; }
+    .partner-status.live { color: #00f59b; font-weight: 600; }
+    .partner-status.typing { color: #00e5ff; font-weight: 600; animation: pulseText 1s infinite; }
 
     @keyframes pulseText {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.45; }
     }
 
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
-    }
+    .header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
     .circle-icon-btn {
       width: 38px;
@@ -388,16 +310,12 @@
       transition: transform 0.15s, background 0.2s;
     }
 
-    .circle-icon-btn:active {
-      transform: scale(0.88);
-    }
-
+    .circle-icon-btn:active { transform: scale(0.88); }
     .btn-voice { background: linear-gradient(135deg, #00c853, #00e5ff); color: #06131f; }
     .btn-video { background: linear-gradient(135deg, #ff4ecd, #ff9a3c); color: #16091f; }
     .btn-knock { background: rgba(255, 214, 0, 0.22); color: #ffe066; }
     .btn-panic { background: linear-gradient(135deg, #ff3b5c, #ff0040); color: #fff; box-shadow: 0 0 12px rgba(255, 59, 92, 0.45); }
 
-    /* Sub-bar for room info & quick privacy toggles */
     .privacy-bar {
       padding: 6px 14px;
       background: rgba(0, 0, 0, 0.25);
@@ -439,16 +357,13 @@
       transition: filter 0.25s ease;
     }
 
-    .messages-area.blurred {
-      filter: blur(14px);
-      user-select: none;
-    }
+    .messages-area.blurred { filter: blur(14px); user-select: none; }
 
     .msg-bubble {
-      max-width: 78%;
-      padding: 11px 15px;
+      max-width: 82%;
+      padding: 10px 14px;
       border-radius: 20px;
-      font-size: 0.96rem;
+      font-size: 0.95rem;
       line-height: 1.4;
       word-wrap: break-word;
       animation: popIn 0.22s ease;
@@ -459,6 +374,13 @@
       from { opacity: 0; transform: translateY(10px) scale(0.95); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
+
+    @keyframes editFlash {
+      0% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.75); }
+      100% { box-shadow: 0 0 0 12px rgba(0, 229, 255, 0); }
+    }
+
+    .msg-bubble.edited-flash { animation: editFlash 0.6s ease; }
 
     .msg-bubble.me {
       align-self: flex-end;
@@ -477,15 +399,34 @@
     }
 
     .msg-meta {
-      font-size: 0.66rem;
-      opacity: 0.72;
-      margin-top: 4px;
-      text-align: right;
+      font-size: 0.67rem;
+      opacity: 0.8;
+      margin-top: 5px;
       display: flex;
       justify-content: flex-end;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
     }
+
+    .edit-msg-btn {
+      background: rgba(255, 255, 255, 0.18);
+      border: none;
+      color: #fff;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      font-size: 0.66rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s, background 0.2s;
+    }
+
+    .edit-msg-btn:hover { background: rgba(0, 229, 255, 0.45); }
+    .edit-msg-btn:active { transform: scale(0.85); }
+
+    .edited-tag { font-style: italic; opacity: 0.85; }
 
     .sys-pill {
       align-self: center;
@@ -498,23 +439,143 @@
       text-align: center;
     }
 
+    /* Media & File Cards inside Chat */
+    .chat-img-preview {
+      max-width: 100%;
+      max-height: 240px;
+      border-radius: 14px;
+      display: block;
+      cursor: pointer;
+      margin-bottom: 6px;
+    }
+
+    .chat-video-preview {
+      max-width: 100%;
+      max-height: 220px;
+      border-radius: 12px;
+      display: block;
+      margin-bottom: 6px;
+      background: #000;
+    }
+
+    .chat-audio-preview {
+      width: 220px;
+      max-width: 100%;
+      height: 36px;
+      margin-bottom: 6px;
+    }
+
+    .file-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.22);
+      padding: 9px 11px;
+      border-radius: 14px;
+      margin-bottom: 6px;
+    }
+
+    .file-card-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(0, 229, 255, 0.2);
+      color: #70f3ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .file-card-info { min-width: 0; flex: 1; }
+    .file-card-name { font-size: 0.86rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .file-card-size { font-size: 0.7rem; opacity: 0.72; }
+
+    .save-file-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 13px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #00f59b, #00e5ff);
+      color: #061422;
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.14s;
+      margin-top: 2px;
+    }
+
+    .save-file-btn:active { transform: scale(0.92); }
+
     .view-once-card {
       display: flex;
       align-items: center;
       gap: 9px;
       cursor: pointer;
       font-weight: 600;
+      padding: 2px 0;
     }
 
-    .view-once-card.opened {
-      opacity: 0.55;
-      cursor: default;
-      font-style: italic;
-      font-weight: 400;
+    .view-once-card.opened { opacity: 0.55; cursor: default; font-style: italic; font-weight: 400; }
+
+    /* Context Strip above Input (Editing / File Preview / One-Time Mode) */
+    .composer-banner {
+      padding: 8px 14px;
+      background: rgba(24, 28, 58, 0.96);
+      border-top: 1px solid rgba(0, 229, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 0.82rem;
+      animation: popIn 0.18s ease;
+    }
+
+    .composer-banner.hidden { display: none; }
+
+    .banner-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .banner-thumb {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .banner-text {
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .banner-close {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 59, 92, 0.24);
+      color: #ff8599;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
 
     /* Bottom Input Bar */
     .chat-input-bar {
+      position: relative;
       padding: 10px 12px 14px;
       background: rgba(16, 18, 38, 0.92);
       border-top: 1px solid var(--glass-border);
@@ -534,9 +595,27 @@
       outline: none;
     }
 
-    .msg-input::placeholder {
-      color: rgba(255, 255, 255, 0.45);
+    .msg-input::placeholder { color: rgba(255, 255, 255, 0.45); }
+
+    .attach-circle-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 78, 205, 0.22);
+      color: #ff9be4;
+      font-size: 1.05rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform 0.14s;
     }
+
+    .attach-circle-btn:active { transform: scale(0.9); }
+
+    .send-wrap { position: relative; flex-shrink: 0; }
 
     .send-circle-btn {
       width: 46px;
@@ -550,46 +629,114 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
       box-shadow: 0 6px 18px rgba(0, 229, 255, 0.35);
-      transition: transform 0.14s;
+      transition: transform 0.14s, background 0.2s;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
     }
 
     .send-circle-btn:active { transform: scale(0.9); }
 
-    .photo-circle-btn {
-      width: 42px;
-      height: 42px;
+    .send-circle-btn.onetime-active {
+      background: linear-gradient(135deg, #ff4ecd, #ff9a3c);
+      color: #16091f;
+      box-shadow: 0 0 20px rgba(255, 78, 205, 0.55);
+    }
+
+    .send-badge {
+      position: absolute;
+      top: -4px;
+      right: -3px;
+      width: 19px;
+      height: 19px;
       border-radius: 50%;
+      background: #ff3b5c;
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 800;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #101226;
+      pointer-events: none;
+    }
+
+    .send-badge.show { display: flex; }
+
+    /* Long-Press Floating Popup Menu */
+    .send-popup {
+      position: absolute;
+      bottom: 58px;
+      right: 0;
+      width: 215px;
+      background: rgba(18, 20, 44, 0.97);
+      border: 1px solid rgba(255, 78, 205, 0.45);
+      border-radius: 18px;
+      padding: 8px;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.65);
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 40;
+      animation: popIn 0.16s ease;
+    }
+
+    .send-popup.open { display: flex; }
+
+    .popup-option {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
       border: none;
-      background: rgba(255, 78, 205, 0.22);
-      color: #ff9be4;
-      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.07);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 600;
       cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+      gap: 9px;
+      text-align: left;
+      transition: background 0.15s;
     }
 
-    /* ================= VIEW-ONCE MODAL ================= */
+    .popup-option:active { transform: scale(0.97); }
+    .popup-option.fire { background: linear-gradient(135deg, rgba(255, 78, 205, 0.35), rgba(255, 154, 60, 0.35)); color: #ffd4f4; }
+    .popup-option.normal { background: rgba(0, 229, 255, 0.16); color: #9ff6ff; }
+
+    /* ================= VIEW-ONCE / IMAGE FULLSCREEN MODAL ================= */
     .modal-overlay {
       position: absolute;
       inset: 0;
-      background: rgba(5, 6, 15, 0.95);
+      background: rgba(5, 6, 15, 0.96);
       z-index: 60;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 20px;
+      gap: 14px;
     }
 
-    .modal-overlay img {
+    .modal-overlay img,
+    .modal-overlay video {
       max-width: 100%;
-      max-height: 75%;
+      max-height: 70%;
       border-radius: 18px;
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-text-card {
+      max-width: 90%;
+      padding: 22px 24px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, rgba(127, 0, 255, 0.45), rgba(225, 0, 255, 0.35));
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      font-size: 1.2rem;
+      text-align: center;
+      line-height: 1.5;
+      word-break: break-word;
     }
 
     .timer-bar-wrap {
@@ -597,7 +744,6 @@
       height: 6px;
       background: rgba(255, 255, 255, 0.15);
       border-radius: 999px;
-      margin-top: 18px;
       overflow: hidden;
     }
 
@@ -608,7 +754,17 @@
       transition: width 5s linear;
     }
 
-    /* ================= CALL OVERLAY (VOICE & VIDEO) ================= */
+    .modal-close-btn {
+      padding: 10px 22px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #ff3b5c, #ff7a3c);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* ================= CALL OVERLAY ================= */
     #call-overlay {
       position: absolute;
       inset: 0;
@@ -719,9 +875,7 @@
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     }
 
-    .toast.show {
-      transform: translateX(-50%) translateY(0);
-    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 <body>
@@ -821,23 +975,60 @@
 
       <div id="messages-area" class="messages-area"></div>
 
+      <!-- Editing Banner -->
+      <div id="edit-banner" class="composer-banner hidden">
+        <div class="banner-left">
+          <i class="fa-solid fa-pen" style="color:#00e5ff;"></i>
+          <div class="banner-text" id="edit-banner-text">Message edit kar rahe ho...</div>
+        </div>
+        <button class="banner-close" onclick="cancelEdit()" title="Cancel Edit">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Pending File Preview Banner -->
+      <div id="file-banner" class="composer-banner hidden">
+        <div class="banner-left" id="file-banner-content"></div>
+        <button class="banner-close" onclick="clearPendingFile()" title="Remove File">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Bottom Input Bar -->
       <div class="chat-input-bar">
-        <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="handlePhotoSelect(event)" />
-        <button class="photo-circle-btn" title="Send View-Once Photo" onclick="document.getElementById('photo-input').click()">
-          <i class="fa-solid fa-camera"></i>
+        <input type="file" id="file-input" style="display:none" onchange="handleFileSelect(event)" />
+        <button class="attach-circle-btn" title="Attach Photo / Video / Any File" onclick="document.getElementById('file-input').click()">
+          <i class="fa-solid fa-paperclip"></i>
         </button>
-        <input id="msg-input" class="msg-input" type="text" placeholder="Message likho..." autocomplete="off" />
-        <button class="send-circle-btn" onclick="sendMessage()">
-          <i class="fa-solid fa-paper-plane"></i>
-        </button>
+        <input id="msg-input" class="msg-input" type="text" placeholder="Message likho... (Long-press Send = One-Time)" autocomplete="off" />
+
+        <div class="send-wrap">
+          <!-- Long-Press Popup Menu -->
+          <div id="send-popup" class="send-popup">
+            <button class="popup-option fire" onclick="chooseOneTimeSend()">
+              <i class="fa-solid fa-fire"></i>
+              <span>Send One-Time (1x)</span>
+            </button>
+            <button class="popup-option normal" onclick="chooseNormalSend()">
+              <i class="fa-solid fa-paper-plane"></i>
+              <span>Normal Send (Save ON)</span>
+            </button>
+          </div>
+
+          <button id="send-btn" class="send-circle-btn" oncontextmenu="return false;" title="Tap: Normal | Hold: One-Time">
+            <i id="send-btn-icon" class="fa-solid fa-paper-plane"></i>
+          </button>
+          <span id="onetime-badge" class="send-badge">1</span>
+        </div>
       </div>
     </div>
 
-    <!-- ================= VIEW-ONCE PHOTO MODAL ================= -->
-    <div id="photo-modal" class="modal-overlay hidden">
-      <img id="modal-img" src="" alt="View Once" />
-      <div class="timer-bar-wrap"><div id="timer-bar" class="timer-bar-fill"></div></div>
-      <div style="margin-top:12px; font-size:0.85rem; color:#ff9be4;">5 second mein photo gayab ho jayegi</div>
+    <!-- ================= VIEW-ONCE / PREVIEW MODAL ================= -->
+    <div id="viewer-modal" class="modal-overlay hidden">
+      <div id="modal-media-container" style="display:flex; flex-direction:column; align-items:center; width:100%;"></div>
+      <div id="timer-bar-wrap" class="timer-bar-wrap hidden"><div id="timer-bar" class="timer-bar-fill"></div></div>
+      <div id="modal-caption" style="font-size:0.85rem; color:#ff9be4; text-align:center;"></div>
+      <button id="modal-close-btn" class="modal-close-btn" onclick="closeViewerModal()">Close</button>
     </div>
 
     <!-- ================= VOICE & VIDEO CALL OVERLAY ================= -->
@@ -851,13 +1042,11 @@
         <p id="call-state-text" style="color:#8cf4ff; margin-top:6px;">Calling...</p>
       </div>
 
-      <!-- Incoming Controls -->
       <div id="incoming-controls" class="call-controls hidden">
         <button class="call-btn end" onclick="rejectCall()"><i class="fa-solid fa-phone-slash"></i></button>
         <button class="call-btn accept" onclick="acceptCall()"><i class="fa-solid fa-phone"></i></button>
       </div>
 
-      <!-- Active Call Controls -->
       <div id="active-controls" class="call-controls hidden">
         <button id="btn-mute" class="call-btn" onclick="toggleMute()"><i class="fa-solid fa-microphone"></i></button>
         <button id="btn-cam" class="call-btn" onclick="toggleCamera()"><i class="fa-solid fa-video"></i></button>
@@ -869,8 +1058,9 @@
 
   <script>
     // ================= CONFIG =================
-    const SECRET_CALC_CODE = "143"; // Calculator mein 143 type karke '=' dabane pe Vault khulega
+    const SECRET_CALC_CODE = "143";
     const PANIC_REDIRECT_URL = "https://en.wikipedia.org/wiki/Engineering_physics";
+    const MAX_FILE_MB = 15;
 
     const socket = io();
     let mySid = null;
@@ -879,6 +1069,12 @@
     let partnerName = "Partner";
     let autoDestructOn = false;
     let typingTimeout = null;
+
+    // New States: Edit, Pending File, One-Time Mode
+    let editingMsgId = null;
+    let pendingFile = null; // { fileData, fileName, fileType, fileSize }
+    let oneTimeSticky = false;
+    let modalAutoCloseTimer = null;
 
     // WebRTC State
     let peerConn = null;
@@ -895,7 +1091,7 @@
       ]
     };
 
-    // ================= SOUND HELPER (No external MP3 needed) =================
+    // ================= HELPERS =================
     function playTone(freq = 660, duration = 0.14) {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -924,31 +1120,56 @@
       });
     }
 
+    function formatBytes(bytes) {
+      if (!bytes) return '0 B';
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+
+    function getFileIcon(mime, name) {
+      const n = (name || '').toLowerCase();
+      if (mime.startsWith('image/')) return 'fa-image';
+      if (mime.startsWith('video/')) return 'fa-film';
+      if (mime.startsWith('audio/')) return 'fa-music';
+      if (mime.includes('pdf') || n.endsWith('.pdf')) return 'fa-file-pdf';
+      if (n.endsWith('.zip') || n.endsWith('.rar') || n.endsWith('.7z')) return 'fa-file-zipper';
+      if (n.endsWith('.doc') || n.endsWith('.docx')) return 'fa-file-word';
+      if (n.endsWith('.xls') || n.endsWith('.xlsx')) return 'fa-file-excel';
+      if (n.endsWith('.ppt') || n.endsWith('.pptx')) return 'fa-file-powerpoint';
+      return 'fa-file-lines';
+    }
+
+    async function saveFileToDevice(dataUrl, fileName) {
+      try {
+        const res = await fetch(dataUrl);
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName || 'download';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 4000);
+        showToast("File save ho rahi hai...");
+      } catch {
+        const a = document.createElement('a');
+        a.href = dataUrl;
+        a.download = fileName || 'download';
+        a.click();
+      }
+    }
+
     // ================= 1. CALCULATOR LOGIC =================
     let calcStr = "";
-
     function updateCalcUI(res = null) {
       document.getElementById('calc-val').textContent = res !== null ? res : (calcStr || "0");
     }
-
-    function calcAdd(ch) {
-      calcStr += ch;
-      updateCalcUI();
-    }
-
-    function calcClear() {
-      calcStr = "";
-      document.getElementById('calc-expr').textContent = "";
-      updateCalcUI("0");
-    }
-
-    function calcBack() {
-      calcStr = calcStr.slice(0, -1);
-      updateCalcUI();
-    }
-
+    function calcAdd(ch) { calcStr += ch; updateCalcUI(); }
+    function calcClear() { calcStr = ""; document.getElementById('calc-expr').textContent = ""; updateCalcUI("0"); }
+    function calcBack() { calcStr = calcStr.slice(0, -1); updateCalcUI(); }
     function calcEqual() {
-      // Secret Unlock Check
       if (calcStr.trim() === SECRET_CALC_CODE) {
         calcClear();
         showScreen('login-screen');
@@ -993,7 +1214,7 @@
       currentRoom = data.room;
       document.getElementById('room-label').textContent = "Room: " + data.room;
       document.getElementById('messages-area').innerHTML = "";
-      addSystemNote("Private room active • Zero history mode");
+      addSystemNote("Private room active • Send pe Long-Press = One-Time");
       showScreen('chat-screen');
     });
 
@@ -1037,7 +1258,7 @@
     });
 
     msgInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') sendMessage();
+      if (e.key === 'Enter') handlePrimarySend();
     });
 
     socket.on('partner_typing', (data) => {
@@ -1052,7 +1273,183 @@
       }
     });
 
-    // ================= 4. CHAT MESSAGES & AUTO-DESTRUCT =================
+    // ================= 4. LONG-PRESS SEND BUTTON & ONE-TIME LOGIC =================
+    const sendBtn = document.getElementById('send-btn');
+    const sendPopup = document.getElementById('send-popup');
+    let pressTimer = null;
+    let longPressTriggered = false;
+
+    function updateSendBtnVisual() {
+      const icon = document.getElementById('send-btn-icon');
+      const badge = document.getElementById('onetime-badge');
+      if (editingMsgId) {
+        sendBtn.classList.remove('onetime-active');
+        badge.classList.remove('show');
+        icon.className = 'fa-solid fa-check';
+      } else if (oneTimeSticky) {
+        sendBtn.classList.add('onetime-active');
+        badge.classList.add('show');
+        icon.className = 'fa-solid fa-fire';
+      } else {
+        sendBtn.classList.remove('onetime-active');
+        badge.classList.remove('show');
+        icon.className = 'fa-solid fa-paper-plane';
+      }
+    }
+
+    function openSendPopup() {
+      if (editingMsgId) return; // Edit karte waqt one-time popup nahi khulega
+      sendPopup.classList.add('open');
+      if (navigator.vibrate) navigator.vibrate(40);
+    }
+
+    function closeSendPopup() {
+      sendPopup.classList.remove('open');
+    }
+
+    sendBtn.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      longPressTriggered = false;
+      pressTimer = setTimeout(() => {
+        longPressTriggered = true;
+        openSendPopup();
+      }, 420);
+    });
+
+    sendBtn.addEventListener('pointerup', (e) => {
+      e.preventDefault();
+      clearTimeout(pressTimer);
+      if (!longPressTriggered) {
+        if (sendPopup.classList.contains('open')) {
+          closeSendPopup();
+        } else {
+          handlePrimarySend();
+        }
+      }
+    });
+
+    sendBtn.addEventListener('pointerleave', () => clearTimeout(pressTimer));
+    sendBtn.addEventListener('pointercancel', () => clearTimeout(pressTimer));
+
+    // Bahar click karne pe popup close ho
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.send-wrap')) closeSendPopup();
+    });
+
+    function chooseOneTimeSend() {
+      closeSendPopup();
+      const hasText = msgInput.value.trim().length > 0;
+      if (pendingFile || hasText) {
+        // Agar file ya text ready hai toh seedha One-Time bhej do
+        executeSend(true);
+        oneTimeSticky = false;
+      } else {
+        // Agar kuch type/attach nahi hai toh agle send ke liye One-Time ON kar do
+        oneTimeSticky = true;
+        showToast("One-Time mode ON! Agla photo/file/msg 1-Time jayega.");
+      }
+      updateSendBtnVisual();
+    }
+
+    function chooseNormalSend() {
+      closeSendPopup();
+      oneTimeSticky = false;
+      updateSendBtnVisual();
+      const hasText = msgInput.value.trim().length > 0;
+      if (pendingFile || hasText) {
+        executeSend(false);
+      } else {
+        showToast("Normal Send mode ON (Save button available).");
+      }
+    }
+
+    function handlePrimarySend() {
+      if (editingMsgId) {
+        submitEdit();
+        return;
+      }
+      executeSend(oneTimeSticky);
+      if (oneTimeSticky) {
+        oneTimeSticky = false;
+        updateSendBtnVisual();
+      }
+    }
+
+    function executeSend(isOneTime) {
+      const text = msgInput.value.trim();
+
+      // 1. Agar koi file attached hai toh bhejo
+      if (pendingFile) {
+        if (!partnerOnline) {
+          showToast("Partner offline hai! File bhejne ke liye dono ka live hona zaroori hai.");
+          return;
+        }
+        socket.emit('send_file', {
+          fileData: pendingFile.fileData,
+          fileName: pendingFile.fileName,
+          fileType: pendingFile.fileType,
+          fileSize: pendingFile.fileSize,
+          oneTime: isOneTime,
+          autoDestruct: autoDestructOn
+        });
+        clearPendingFile();
+      }
+
+      // 2. Agar text bhi likha hai toh text bhejo
+      if (text) {
+        socket.emit('send_message', {
+          text,
+          autoDestruct: autoDestructOn,
+          oneTime: isOneTime
+        });
+        socket.emit('typing', { isTyping: false });
+        msgInput.value = "";
+      }
+    }
+
+    // ================= 5. MESSAGE EDITING =================
+    function startEditMessage(msgId, currentText) {
+      clearPendingFile();
+      editingMsgId = msgId;
+      document.getElementById('edit-banner-text').textContent = "Editing: " + currentText;
+      document.getElementById('edit-banner').classList.remove('hidden');
+      msgInput.value = currentText;
+      msgInput.focus();
+      updateSendBtnVisual();
+    }
+
+    function cancelEdit() {
+      editingMsgId = null;
+      document.getElementById('edit-banner').classList.add('hidden');
+      msgInput.value = "";
+      updateSendBtnVisual();
+    }
+
+    function submitEdit() {
+      const newText = msgInput.value.trim();
+      if (!newText || !editingMsgId) {
+        cancelEdit();
+        return;
+      }
+      socket.emit('edit_message', { msgId: editingMsgId, newText });
+      cancelEdit();
+    }
+
+    socket.on('message_edited', (data) => {
+      const bubble = document.querySelector(`.msg-bubble[data-msg-id="${data.msgId}"]`);
+      if (!bubble) return;
+      const textEl = bubble.querySelector('.msg-text');
+      if (textEl) textEl.textContent = data.newText;
+
+      const editedSpan = bubble.querySelector('.edited-tag');
+      if (editedSpan) editedSpan.textContent = "(edited)";
+
+      bubble.classList.remove('edited-flash');
+      void bubble.offsetWidth;
+      bubble.classList.add('edited-flash');
+    });
+
+    // ================= 6. PRIVACY TOGGLES & TEXT MESSAGES =================
     function toggleAutoDestruct() {
       autoDestructOn = !autoDestructOn;
       const btn = document.getElementById('destruct-toggle');
@@ -1067,14 +1464,6 @@
       btn.classList.toggle('active', blurred);
     }
 
-    function sendMessage() {
-      const text = msgInput.value.trim();
-      if (!text) return;
-      socket.emit('send_message', { text, autoDestruct: autoDestructOn });
-      socket.emit('typing', { isTyping: false });
-      msgInput.value = "";
-    }
-
     function addSystemNote(text) {
       const area = document.getElementById('messages-area');
       const div = document.createElement('div');
@@ -1086,23 +1475,71 @@
 
     socket.on('system_note', (data) => addSystemNote(data.msg));
 
+    function scheduleAutoDestruct(bubble) {
+      setTimeout(() => {
+        bubble.style.transition = 'opacity 0.5s, transform 0.5s';
+        bubble.style.opacity = '0';
+        bubble.style.transform = 'scale(0.85)';
+        setTimeout(() => bubble.remove(), 500);
+      }, 30000);
+    }
+
     socket.on('receive_message', (data) => {
       const area = document.getElementById('messages-area');
       const isMe = data.senderSid === mySid;
 
       const bubble = document.createElement('div');
       bubble.className = 'msg-bubble ' + (isMe ? 'me' : 'them');
+      bubble.setAttribute('data-msg-id', data.id);
 
-      const textNode = document.createElement('div');
-      textNode.textContent = data.text;
-      bubble.appendChild(textNode);
+      if (data.oneTime) {
+        const card = document.createElement('div');
+        card.className = 'view-once-card';
+        card.innerHTML = `<i class="fa-solid fa-fire"></i> <span>${isMe ? 'One-Time Message bheja' : 'Tap to View Secret Message (1x)'}</span>`;
+        if (!isMe) {
+          let secretText = data.text;
+          card.onclick = () => {
+            if (!secretText) return;
+            openOneTimeTextModal(secretText);
+            secretText = null;
+            card.classList.add('opened');
+            card.innerHTML = `<i class="fa-solid fa-check-double"></i> <span>Message viewed & destroyed</span>`;
+          };
+        }
+        bubble.appendChild(card);
+      } else {
+        const textNode = document.createElement('div');
+        textNode.className = 'msg-text';
+        textNode.textContent = data.text;
+        bubble.appendChild(textNode);
+      }
 
       const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const meta = document.createElement('div');
       meta.className = 'msg-meta';
-      meta.innerHTML = `${data.autoDestruct ? '<i class="fa-solid fa-fire"></i> ' : ''}${data.fromRam ? 'RAM • ' : ''}${timeStr}`;
-      bubble.appendChild(meta);
 
+      if (isMe && !data.oneTime) {
+        const editBtn = document.createElement('button');
+        editBtn.className = 'edit-msg-btn';
+        editBtn.title = 'Edit message';
+        editBtn.innerHTML = '<i class="fa-solid fa-pen"></i>';
+        editBtn.onclick = () => {
+          const latestText = bubble.querySelector('.msg-text')?.textContent || data.text;
+          startEditMessage(data.id, latestText);
+        };
+        meta.appendChild(editBtn);
+      }
+
+      const editedSpan = document.createElement('span');
+      editedSpan.className = 'edited-tag';
+      editedSpan.textContent = data.edited ? '(edited)' : '';
+      meta.appendChild(editedSpan);
+
+      const timeSpan = document.createElement('span');
+      timeSpan.innerHTML = `${data.autoDestruct ? '<i class="fa-solid fa-fire"></i> ' : ''}${data.fromRam ? 'RAM • ' : ''}${timeStr}`;
+      meta.appendChild(timeSpan);
+
+      bubble.appendChild(meta);
       area.appendChild(bubble);
       area.scrollTop = area.scrollHeight;
 
@@ -1113,89 +1550,263 @@
         }
       }
 
-      if (data.autoDestruct) {
-        setTimeout(() => {
-          bubble.style.transition = 'opacity 0.5s, transform 0.5s';
-          bubble.style.opacity = '0';
-          bubble.style.transform = 'scale(0.85)';
-          setTimeout(() => bubble.remove(), 500);
-        }, 30000);
-      }
+      if (data.autoDestruct) scheduleAutoDestruct(bubble);
     });
 
-    // ================= 5. VIEW-ONCE PHOTO (Client Compressed) =================
-    function handlePhotoSelect(event) {
+    // ================= 7. ALL FILE TYPES ATTACH, PREVIEW, SAVE & ONE-TIME =================
+    function handleFileSelect(event) {
       const file = event.target.files[0];
-      if (!file) return;
       event.target.value = "";
+      if (!file) return;
+
+      if (file.size > MAX_FILE_MB * 1024 * 1024) {
+        showToast(`File ${MAX_FILE_MB} MB se badi hai! Thodi chhoti file select karo.`);
+        return;
+      }
+
+      cancelEdit();
+      showToast("File prepare ho rahi hai...");
 
       const reader = new FileReader();
       reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const maxW = 720;
-          const scale = Math.min(1, maxW / img.width);
-          canvas.width = img.width * scale;
-          canvas.height = img.height * scale;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          const compressed = canvas.toDataURL('image/jpeg', 0.72);
-          socket.emit('send_view_once', { image: compressed });
+        pendingFile = {
+          fileData: e.target.result,
+          fileName: file.name,
+          fileType: file.type || 'application/octet-stream',
+          fileSize: file.size
         };
-        img.src = e.target.result;
+        renderPendingFileBanner();
       };
       reader.readAsDataURL(file);
     }
 
-    socket.on('receive_view_once', (data) => {
+    function renderPendingFileBanner() {
+      const banner = document.getElementById('file-banner');
+      const content = document.getElementById('file-banner-content');
+      if (!pendingFile) {
+        banner.classList.add('hidden');
+        return;
+      }
+
+      if (pendingFile.fileType.startsWith('image/')) {
+        content.innerHTML = `
+          <img src="${pendingFile.fileData}" class="banner-thumb" alt="preview" />
+          <div class="banner-text">
+            <strong>${escapeHtml(pendingFile.fileName)}</strong><br/>
+            <span style="opacity:0.7; font-size:0.74rem;">${formatBytes(pendingFile.fileSize)} • Tap Send (Normal) | Hold Send (One-Time)</span>
+          </div>`;
+      } else {
+        const icon = getFileIcon(pendingFile.fileType, pendingFile.fileName);
+        content.innerHTML = `
+          <div class="file-card-icon"><i class="fa-solid ${icon}"></i></div>
+          <div class="banner-text">
+            <strong>${escapeHtml(pendingFile.fileName)}</strong><br/>
+            <span style="opacity:0.7; font-size:0.74rem;">${formatBytes(pendingFile.fileSize)} • Tap Send (Normal) | Hold Send (One-Time)</span>
+          </div>`;
+      }
+      banner.classList.remove('hidden');
+    }
+
+    function clearPendingFile() {
+      pendingFile = null;
+      document.getElementById('file-banner').classList.add('hidden');
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    socket.on('receive_file', (data) => {
       const area = document.getElementById('messages-area');
       const isMe = data.senderSid === mySid;
       const bubble = document.createElement('div');
       bubble.className = 'msg-bubble ' + (isMe ? 'me' : 'them');
 
-      const card = document.createElement('div');
-      card.className = 'view-once-card';
-      card.innerHTML = `<i class="fa-solid fa-circle-dot"></i> <span>${isMe ? 'View-Once Photo bheji' : 'Tap to View Photo (1-Time)'}</span>`;
+      if (data.oneTime) {
+        // ONE-TIME MODE (No Save Button)
+        const card = document.createElement('div');
+        card.className = 'view-once-card';
+        const label = data.fileType.startsWith('image/') ? 'Photo' : (data.fileType.startsWith('video/') ? 'Video' : 'File');
+        card.innerHTML = `<i class="fa-solid fa-fire"></i> <span>${isMe ? `One-Time ${label} bheja` : `Tap to View One-Time ${label} (1x)`}</span>`;
 
-      if (!isMe) {
-        let imgPayload = data.image;
-        card.onclick = () => {
-          if (!imgPayload) return;
-          openViewOnceModal(imgPayload);
-          imgPayload = null;
-          card.classList.add('opened');
-          card.innerHTML = `<i class="fa-solid fa-fire"></i> <span>Photo viewed & destroyed</span>`;
-        };
+        if (!isMe) {
+          let payload = data.fileData;
+          const mime = data.fileType;
+          const fname = data.fileName;
+          card.onclick = () => {
+            if (!payload) return;
+            openOneTimeFileModal(payload, mime, fname);
+            payload = null;
+            card.classList.add('opened');
+            card.innerHTML = `<i class="fa-solid fa-check-double"></i> <span>${label} viewed & destroyed</span>`;
+          };
+        }
+        bubble.appendChild(card);
+      } else {
+        // NORMAL MODE (Preview + Save Button for BOTH sender & receiver)
+        if (data.fileType.startsWith('image/')) {
+          const img = document.createElement('img');
+          img.src = data.fileData;
+          img.className = 'chat-img-preview';
+          img.onclick = () => openNormalImageModal(data.fileData, data.fileName);
+          bubble.appendChild(img);
+        } else if (data.fileType.startsWith('video/')) {
+          const vid = document.createElement('video');
+          vid.src = data.fileData;
+          vid.controls = true;
+          vid.playsInline = true;
+          vid.className = 'chat-video-preview';
+          bubble.appendChild(vid);
+        } else if (data.fileType.startsWith('audio/')) {
+          const aud = document.createElement('audio');
+          aud.src = data.fileData;
+          aud.controls = true;
+          aud.className = 'chat-audio-preview';
+          bubble.appendChild(aud);
+        } else {
+          const icon = getFileIcon(data.fileType, data.fileName);
+          const card = document.createElement('div');
+          card.className = 'file-card';
+          card.innerHTML = `
+            <div class="file-card-icon"><i class="fa-solid ${icon}"></i></div>
+            <div class="file-card-info">
+              <div class="file-card-name">${escapeHtml(data.fileName)}</div>
+              <div class="file-card-size">${formatBytes(data.fileSize)}</div>
+            </div>`;
+          bubble.appendChild(card);
+        }
+
+        // Save / Download Button
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'save-file-btn';
+        saveBtn.innerHTML = `<i class="fa-solid fa-download"></i> Save`;
+        saveBtn.onclick = () => saveFileToDevice(data.fileData, data.fileName);
+        bubble.appendChild(saveBtn);
       }
 
-      bubble.appendChild(card);
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const meta = document.createElement('div');
+      meta.className = 'msg-meta';
+      meta.innerHTML = `${data.autoDestruct ? '<i class="fa-solid fa-fire"></i> ' : ''}${timeStr}`;
+      bubble.appendChild(meta);
+
       area.appendChild(bubble);
       area.scrollTop = area.scrollHeight;
       if (!isMe) playTone(620, 0.12);
+      if (data.autoDestruct) scheduleAutoDestruct(bubble);
     });
 
-    function openViewOnceModal(src) {
-      const modal = document.getElementById('photo-modal');
-      const img = document.getElementById('modal-img');
-      const bar = document.getElementById('timer-bar');
-      img.src = src;
-      bar.style.transition = 'none';
-      bar.style.width = '100%';
-      modal.classList.remove('hidden');
-
-      requestAnimationFrame(() => {
-        bar.style.transition = 'width 5s linear';
-        bar.style.width = '0%';
-      });
-
-      setTimeout(() => {
-        modal.classList.add('hidden');
-        img.src = "";
-      }, 5100);
+    // ================= 8. VIEWER MODAL (ONE-TIME & NORMAL ZOOM) =================
+    function closeViewerModal() {
+      clearTimeout(modalAutoCloseTimer);
+      const modal = document.getElementById('viewer-modal');
+      modal.classList.add('hidden');
+      document.getElementById('modal-media-container').innerHTML = "";
+      document.getElementById('timer-bar-wrap').classList.add('hidden');
     }
 
-    // ================= 6. DISGUISED KNOCK & PANIC =================
+    function startModalCountdown(seconds) {
+      const wrap = document.getElementById('timer-bar-wrap');
+      const bar = document.getElementById('timer-bar');
+      wrap.classList.remove('hidden');
+      bar.style.transition = 'none';
+      bar.style.width = '100%';
+      requestAnimationFrame(() => {
+        bar.style.transition = `width ${seconds}s linear`;
+        bar.style.width = '0%';
+      });
+      modalAutoCloseTimer = setTimeout(closeViewerModal, seconds * 1000 + 100);
+    }
+
+    function openOneTimeTextModal(text) {
+      const container = document.getElementById('modal-media-container');
+      const card = document.createElement('div');
+      card.className = 'modal-text-card';
+      card.textContent = text;
+      container.innerHTML = "";
+      container.appendChild(card);
+      document.getElementById('modal-caption').textContent = "5 second mein ye message gayab ho jayega";
+      document.getElementById('modal-close-btn').textContent = "Destroy Now";
+      document.getElementById('viewer-modal').classList.remove('hidden');
+      startModalCountdown(5);
+    }
+
+    function openOneTimeFileModal(src, mime, fileName) {
+      const container = document.getElementById('modal-media-container');
+      container.innerHTML = "";
+      document.getElementById('modal-close-btn').textContent = "Close & Destroy";
+
+      if (mime.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = src;
+        container.appendChild(img);
+        document.getElementById('modal-caption').textContent = "5 second mein photo gayab ho jayegi";
+        document.getElementById('viewer-modal').classList.remove('hidden');
+        startModalCountdown(5);
+      } else if (mime.startsWith('video/')) {
+        const vid = document.createElement('video');
+        vid.src = src;
+        vid.controls = true;
+        vid.autoplay = true;
+        vid.playsInline = true;
+        vid.onended = closeViewerModal;
+        container.appendChild(vid);
+        document.getElementById('modal-caption').textContent = "One-Time Video • Close karte hi delete ho jayegi";
+        document.getElementById('viewer-modal').classList.remove('hidden');
+      } else if (mime.startsWith('audio/')) {
+        const aud = document.createElement('audio');
+        aud.src = src;
+        aud.controls = true;
+        aud.autoplay = true;
+        aud.onended = closeViewerModal;
+        container.appendChild(aud);
+        document.getElementById('modal-caption').textContent = "One-Time Audio • Close karte hi delete ho jayega";
+        document.getElementById('viewer-modal').classList.remove('hidden');
+      } else {
+        const box = document.createElement('div');
+        box.className = 'modal-text-card';
+        box.innerHTML = `<i class="fa-solid ${getFileIcon(mime, fileName)}" style="font-size:2.4rem; margin-bottom:10px; display:block;"></i>${escapeHtml(fileName)}`;
+        container.appendChild(box);
+        if (mime.includes('pdf') || mime.startsWith('text/')) {
+          const frame = document.createElement('iframe');
+          frame.src = src;
+          frame.style.width = '92%';
+          frame.style.height = '55vh';
+          frame.style.borderRadius = '14px';
+          frame.style.border = 'none';
+          frame.style.marginTop = '12px';
+          frame.style.background = '#fff';
+          container.appendChild(frame);
+        }
+        document.getElementById('modal-caption').textContent = "One-Time File • Close karte hi destroy ho jayegi";
+        document.getElementById('viewer-modal').classList.remove('hidden');
+      }
+    }
+
+    function openNormalImageModal(src, fileName) {
+      const container = document.getElementById('modal-media-container');
+      container.innerHTML = "";
+      const img = document.createElement('img');
+      img.src = src;
+      container.appendChild(img);
+
+      const saveBtn = document.createElement('button');
+      saveBtn.className = 'save-file-btn';
+      saveBtn.style.marginTop = '14px';
+      saveBtn.innerHTML = `<i class="fa-solid fa-download"></i> Save Photo`;
+      saveBtn.onclick = () => saveFileToDevice(src, fileName);
+      container.appendChild(saveBtn);
+
+      document.getElementById('modal-caption').textContent = fileName;
+      document.getElementById('modal-close-btn').textContent = "Close";
+      document.getElementById('viewer-modal').classList.remove('hidden');
+    }
+
+    // ================= 9. DISGUISED KNOCK & PANIC =================
     function sendKnock() {
       socket.emit('knock_partner');
       showToast("Disguised Knock alert bhej diya gaya!");
@@ -1217,7 +1828,7 @@
       window.location.replace(PANIC_REDIRECT_URL);
     }
 
-    // ================= 7. WEBRTC VOICE & VIDEO CALL =================
+    // ================= 10. WEBRTC VOICE & VIDEO CALL =================
     async function getMedia(type) {
       const constraints = {
         audio: true,
@@ -1232,8 +1843,7 @@
         if (e.candidate) socket.emit('webrtc_ice', { candidate: e.candidate });
       };
       pc.ontrack = (e) => {
-        const remoteVideo = document.getElementById('remote-video');
-        remoteVideo.srcObject = e.streams[0];
+        document.getElementById('remote-video').srcObject = e.streams[0];
       };
       if (localStream) {
         localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
