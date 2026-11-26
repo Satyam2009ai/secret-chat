@@ -14,20 +14,12 @@ socketio = SocketIO(
 )
 
 # Pure RAM storage (Zero database)
-# rooms = {
-#   room_id: {
-#     'pin': str,
-#     'users': { sid: name },
-#     'unseen': [ {id, kind, ..., sender, sender_key, senderSid, ts} ],
-#     'pending_knock': { 'sender': str, 'sender_key': str, 'ts': float } | None
-#   }
-# }
 rooms = {}
 sid_to_room = {}
 
 MAX_UNSEEN_TEXTS = 60
 MAX_UNSEEN_FILES = 5
-MAX_OFFLINE_FILE_BYTES = 5 * 1024 * 1024  # 5 MB tak ki unseen photo/file RAM mein wait kar sakti hai
+MAX_OFFLINE_FILE_BYTES = 5 * 1024 * 1024  # 5 MB tak unseen photo/file RAM mein wait kar sakti hai
 
 
 def broadcast_room_status(room_id):
@@ -39,6 +31,17 @@ def broadcast_room_status(room_id):
         'count': len(users),
         'users': user_list
     }, to=room_id)
+
+
+def sanitize_reply(reply_data):
+    if not isinstance(reply_data, dict):
+        return None
+    r_id = str(reply_data.get('id', '')).strip()
+    r_sender = str(reply_data.get('sender', '')).strip()[:24]
+    r_text = str(reply_data.get('text', '')).strip()[:120]
+    if not r_id or not r_text:
+        return None
+    return {'id': r_id, 'sender': r_sender, 'text': r_text}
 
 
 @app.route('/')
@@ -97,7 +100,6 @@ def handle_join(data):
         emit('join_error', {'msg': 'Room Locked hai! Is room mein already 2 log baat kar rahe hain.'})
         return
 
-    # Ensure both partners have distinct nicknames so Seen tracking never confuses sender & receiver
     for existing_sid, existing_name in room['users'].items():
         if existing_sid != sid and existing_name.lower() == name.lower():
             emit('join_error', {'msg': 'Ye nickname tumhare partner ne liya hai! Apna alag nickname daalo.'})
@@ -116,7 +118,6 @@ def handle_join(data):
 
     broadcast_room_status(room_id)
 
-    # Agar partner ne offline rehne pe Knock bheja tha toh ab deliver karo
     pk = room.get('pending_knock')
     if pk and pk['sender_key'] != my_key:
         emit('knock_received', {
@@ -125,7 +126,7 @@ def handle_join(data):
         })
         room['pending_knock'] = None
 
-    # Deliver all UNSEEN messages/files jo partner ne bheje the (jab tak seen nahi honge, RAM se delete nahi honge)
+    # Unseen messages/files/stickers deliver karo (jab tak seen na honge, RAM se delete nahi honge)
     unseen_for_me = [item for item in room['unseen'] if item['sender_key'] != my_key]
     if unseen_for_me:
         for item in unseen_for_me:
@@ -139,6 +140,17 @@ def handle_join(data):
                     'autoHide': item.get('autoHide', False),
                     'oneTime': False,
                     'edited': item.get('edited', False),
+                    'replyTo': item.get('replyTo'),
+                    'seen': False
+                })
+            elif item['kind'] == 'sticker':
+                emit('receive_sticker', {
+                    'id': item['id'],
+                    'stickerId': item['stickerId'],
+                    'sender': item['sender'],
+                    'senderSid': item['senderSid'],
+                    'autoHide': item.get('autoHide', False),
+                    'replyTo': item.get('replyTo'),
                     'seen': False
                 })
             elif item['kind'] == 'file':
@@ -152,6 +164,7 @@ def handle_join(data):
                     'senderSid': item['senderSid'],
                     'oneTime': False,
                     'autoHide': item.get('autoHide', False),
+                    'replyTo': item.get('replyTo'),
                     'seen': False
                 })
 
@@ -166,6 +179,7 @@ def handle_message(data):
     text = str(data.get('text', '')).strip()
     auto_hide = bool(data.get('autoHide', False))
     one_time = bool(data.get('oneTime', False))
+    reply_to = sanitize_reply(data.get('replyTo'))
     if not text:
         return
 
@@ -178,13 +192,11 @@ def handle_message(data):
         emit('system_note', {'msg': 'Partner offline hai! 1x Secret Message sirf live hone par bhej sakte ho.'})
         return
 
-    # Non-oneTime messages hamesha RAM unseen queue mein rahenge jab tak partner Seen na kar le
     if not one_time:
-        text_items = [x for x in room['unseen'] if x['kind'] == 'text']
+        text_items = [x for x in room['unseen'] if x['kind'] in ('text', 'sticker')]
         if len(text_items) >= MAX_UNSEEN_TEXTS:
-            # Remove oldest text item to keep RAM safe
             for idx, x in enumerate(room['unseen']):
-                if x['kind'] == 'text':
+                if x['kind'] in ('text', 'sticker'):
                     room['unseen'].pop(idx)
                     break
 
@@ -197,6 +209,7 @@ def handle_message(data):
             'senderSid': sid,
             'autoHide': auto_hide,
             'edited': False,
+            'replyTo': reply_to,
             'ts': time.time()
         })
 
@@ -209,6 +222,48 @@ def handle_message(data):
         'autoHide': auto_hide,
         'oneTime': one_time,
         'edited': False,
+        'replyTo': reply_to,
+        'seen': False
+    }, to=room_id)
+
+
+@socketio.on('send_sticker')
+def handle_sticker(data):
+    sid = request.sid
+    room_id = sid_to_room.get(sid)
+    if not room_id or room_id not in rooms:
+        return
+
+    sticker_id = str(data.get('stickerId', '')).strip()
+    auto_hide = bool(data.get('autoHide', False))
+    reply_to = sanitize_reply(data.get('replyTo'))
+    if not sticker_id:
+        return
+
+    room = rooms[room_id]
+    sender_name = room['users'].get(sid, 'Partner')
+    sender_key = sender_name.lower()
+    msg_id = uuid.uuid4().hex[:10]
+
+    room['unseen'].append({
+        'id': msg_id,
+        'kind': 'sticker',
+        'stickerId': sticker_id,
+        'sender': sender_name,
+        'sender_key': sender_key,
+        'senderSid': sid,
+        'autoHide': auto_hide,
+        'replyTo': reply_to,
+        'ts': time.time()
+    })
+
+    emit('receive_sticker', {
+        'id': msg_id,
+        'stickerId': sticker_id,
+        'sender': sender_name,
+        'senderSid': sid,
+        'autoHide': auto_hide,
+        'replyTo': reply_to,
         'seen': False
     }, to=room_id)
 
@@ -231,7 +286,6 @@ def handle_mark_seen(data):
     actually_seen = []
     remaining = []
     for item in room['unseen']:
-        # Sirf partner (non-sender) hi message ko Seen mark karke RAM se wipe kar sakta hai
         if item['id'] in msg_ids and item['sender_key'] != viewer_key:
             actually_seen.append(item['id'])
         else:
@@ -260,7 +314,6 @@ def handle_edit_message(data):
 
     editor_key = rooms[room_id]['users'].get(sid, '').lower()
 
-    # Agar message abhi unseen queue mein hai toh wahan bhi update karo
     for item in rooms[room_id]['unseen']:
         if item['id'] == msg_id and item['kind'] == 'text' and item['sender_key'] == editor_key:
             item['text'] = new_text
@@ -270,6 +323,29 @@ def handle_edit_message(data):
         'msgId': msg_id,
         'newText': new_text,
         'editorSid': sid
+    }, to=room_id)
+
+
+@socketio.on('delete_message')
+def handle_delete_message(data):
+    sid = request.sid
+    room_id = sid_to_room.get(sid)
+    if not room_id or room_id not in rooms:
+        return
+
+    msg_id = str(data.get('msgId', '')).strip()
+    if not msg_id:
+        return
+
+    requester_key = rooms[room_id]['users'].get(sid, '').lower()
+    rooms[room_id]['unseen'] = [
+        item for item in rooms[room_id]['unseen']
+        if not (item['id'] == msg_id and item['sender_key'] == requester_key)
+    ]
+
+    emit('message_deleted', {
+        'msgId': msg_id,
+        'deletedBy': rooms[room_id]['users'].get(sid, 'Partner')
     }, to=room_id)
 
 
@@ -286,6 +362,7 @@ def handle_send_file(data):
     file_size = int(data.get('fileSize', 0))
     one_time = bool(data.get('oneTime', False))
     auto_hide = bool(data.get('autoHide', False))
+    reply_to = sanitize_reply(data.get('replyTo'))
 
     if not file_data:
         return
@@ -305,7 +382,6 @@ def handle_send_file(data):
 
     file_id = uuid.uuid4().hex[:10]
 
-    # Normal photo/file (<= 5 MB) ko unseen RAM queue mein rakho jab tak partner seen na kar le
     if not one_time and file_size <= MAX_OFFLINE_FILE_BYTES:
         file_items = [x for x in room['unseen'] if x['kind'] == 'file']
         if len(file_items) >= MAX_UNSEEN_FILES:
@@ -325,6 +401,7 @@ def handle_send_file(data):
             'sender_key': sender_key,
             'senderSid': sid,
             'autoHide': auto_hide,
+            'replyTo': reply_to,
             'ts': time.time()
         })
 
@@ -338,6 +415,7 @@ def handle_send_file(data):
         'senderSid': sid,
         'oneTime': one_time,
         'autoHide': auto_hide,
+        'replyTo': reply_to,
         'seen': False
     }, to=room_id)
 
@@ -361,7 +439,6 @@ def handle_knock():
     sender_name = room['users'].get(sid, 'Partner')
 
     if len(room['users']) >= 2:
-        # Partner connected hai (ya minimized hai) -> Direct alert bhejo
         emit('knock_received', {
             'sender': sender_name,
             'msg': 'Study Reminder: Physics notes update check kar lo!'
@@ -371,7 +448,6 @@ def handle_knock():
             'msg': 'Partner ke phone par disguised notification pahunch gaya!'
         })
     else:
-        # Partner offline hai -> Hold in RAM & sender ko honest status batao
         room['pending_knock'] = {
             'sender': sender_name,
             'sender_key': sender_name.lower(),
@@ -457,7 +533,6 @@ def handle_disconnect():
         emit('partner_typing', {'isTyping': False}, to=room_id)
         broadcast_room_status(room_id)
 
-        # Agar room khaali hai aur koi unseen message ya knock pending nahi hai toh room delete
         if (
             len(rooms[room_id]['users']) == 0
             and len(rooms[room_id]['unseen']) == 0
@@ -467,4 +542,4 @@ def handle_disconnect():
 
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, port=5001)
+   socketio.run(app, debug=True, port=5001)
