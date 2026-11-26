@@ -8,14 +8,10 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
   <style>
     :root {
-      --bg-1: #0f0c29;
-      --bg-2: #302b63;
-      --bg-3: #24243e;
       --accent-1: #ff4ecd;
       --accent-2: #00e5ff;
       --accent-3: #00f59b;
       --danger: #ff3b5c;
-      --glass: rgba(255, 255, 255, 0.08);
       --glass-border: rgba(255, 255, 255, 0.16);
       --text-main: #ffffff;
       --text-dim: rgba(255, 255, 255, 0.68);
@@ -54,7 +50,7 @@
       max-width: 480px;
       position: relative;
       overflow: hidden;
-      background: rgba(12, 14, 30, 0.68);
+      background: rgba(12, 14, 30, 0.7);
       backdrop-filter: blur(20px);
       display: flex;
       flex-direction: column;
@@ -296,7 +292,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.15s, background 0.2s;
+      transition: transform 0.15s;
     }
 
     .circle-icon-btn:active { transform: scale(0.88); }
@@ -327,7 +323,6 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      transition: background 0.2s;
     }
 
     .pill-toggle.active {
@@ -340,6 +335,7 @@
     .messages-area {
       flex: 1;
       overflow-y: auto;
+      overflow-x: hidden;
       padding: 16px 14px;
       display: flex;
       flex-direction: column;
@@ -348,6 +344,34 @@
     }
 
     .messages-area.blurred { filter: blur(14px); user-select: none; }
+
+    .msg-row {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      position: relative;
+    }
+
+    .msg-row.me { justify-content: flex-end; }
+    .msg-row.them { justify-content: flex-start; }
+
+    .swipe-reply-hint {
+      position: absolute;
+      left: 6px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(0, 229, 255, 0.22);
+      color: #70f3ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      opacity: 0;
+      transform: scale(0.6);
+      transition: opacity 0.15s, transform 0.15s;
+      pointer-events: none;
+    }
 
     .msg-bubble {
       max-width: 82%;
@@ -358,6 +382,17 @@
       word-wrap: break-word;
       animation: popIn 0.22s ease;
       position: relative;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: pan-y;
+      will-change: transform;
+    }
+
+    .msg-bubble.sticker-bubble {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 4px 6px;
     }
 
     @keyframes popIn {
@@ -365,15 +400,14 @@
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    @keyframes editFlash {
-      0% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.75); }
-      100% { box-shadow: 0 0 0 12px rgba(0, 229, 255, 0); }
+    @keyframes highlightFlash {
+      0% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.85); }
+      100% { box-shadow: 0 0 0 14px rgba(0, 229, 255, 0); }
     }
 
-    .msg-bubble.edited-flash { animation: editFlash 0.6s ease; }
+    .msg-bubble.highlight-flash { animation: highlightFlash 0.7s ease; }
 
     .msg-bubble.me {
-      align-self: flex-end;
       background: linear-gradient(135deg, #7f00ff, #e100ff);
       color: #fff;
       border-bottom-right-radius: 6px;
@@ -381,11 +415,36 @@
     }
 
     .msg-bubble.them {
-      align-self: flex-start;
       background: rgba(255, 255, 255, 0.12);
       border: 1px solid rgba(255, 255, 255, 0.12);
       color: #fff;
       border-bottom-left-radius: 6px;
+    }
+
+    /* Quoted Reply inside Bubble */
+    .quoted-reply {
+      background: rgba(0, 0, 0, 0.28);
+      border-left: 3px solid #00e5ff;
+      border-radius: 10px;
+      padding: 6px 9px;
+      margin-bottom: 6px;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+
+    .quoted-reply-sender {
+      font-weight: 700;
+      color: #70f3ff;
+      font-size: 0.72rem;
+      margin-bottom: 2px;
+    }
+
+    .quoted-reply-text {
+      opacity: 0.85;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 210px;
     }
 
     .msg-meta {
@@ -403,7 +462,7 @@
       align-items: center;
       gap: 3px;
       font-weight: 600;
-      color: rgba(255, 255, 255, 0.72);
+      color: rgba(255, 255, 255, 0.75);
     }
 
     .seen-indicator.is-seen {
@@ -411,28 +470,11 @@
       text-shadow: 0 0 8px rgba(0, 245, 255, 0.55);
     }
 
-    .edit-msg-btn {
-      background: rgba(255, 255, 255, 0.18);
-      border: none;
-      color: #fff;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      font-size: 0.66rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.15s, background 0.2s;
-    }
-
-    .edit-msg-btn:hover { background: rgba(0, 229, 255, 0.45); }
-    .edit-msg-btn:active { transform: scale(0.85); }
     .edited-tag { font-style: italic; opacity: 0.85; }
 
     .sys-pill {
       align-self: center;
-      font-size: 0.74rem;
+      font-size: 0.73rem;
       background: rgba(0, 229, 255, 0.14);
       border: 1px solid rgba(0, 229, 255, 0.25);
       color: #9ff6ff;
@@ -451,7 +493,41 @@
       padding: 7px 15px;
       border-radius: 999px;
       text-align: center;
-      animation: popIn 0.25s ease;
+    }
+
+    /* Animated Sticker Card in Chat */
+    .sticker-visual {
+      width: 128px;
+      padding: 12px 10px;
+      border-radius: 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+      animation: stickerBounce 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes stickerBounce {
+      0% { transform: scale(0.4) rotate(-8deg); opacity: 0; }
+      100% { transform: scale(1) rotate(0); opacity: 1; }
+    }
+
+    .sticker-emoji {
+      font-size: 3.1rem;
+      line-height: 1.05;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35));
+      animation: floatPulse 2.4s ease-in-out infinite;
+    }
+
+    .sticker-label {
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      color: #fff;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
     }
 
     /* Media & File Cards */
@@ -498,16 +574,13 @@
       font-size: 0.76rem;
       font-weight: 700;
       cursor: pointer;
-      transition: transform 0.14s;
       margin-top: 2px;
     }
-
-    .save-file-btn:active { transform: scale(0.92); }
 
     .view-once-card { display: flex; align-items: center; gap: 9px; cursor: pointer; font-weight: 600; padding: 2px 0; }
     .view-once-card.opened { opacity: 0.55; cursor: default; font-style: italic; font-weight: 400; }
 
-    /* Context Strip above Input */
+    /* Context Strip above Input (Reply / Edit / File) */
     .composer-banner {
       padding: 8px 14px;
       background: rgba(24, 28, 58, 0.96);
@@ -517,12 +590,11 @@
       justify-content: space-between;
       gap: 10px;
       font-size: 0.82rem;
-      animation: popIn 0.18s ease;
     }
 
     .composer-banner.hidden { display: none; }
     .banner-left { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
-    .banner-thumb { width: 38px; height: 38px; border-radius: 10px; object-fit: cover; border: 1px solid rgba(255, 255, 255, 0.25); }
+    .banner-thumb { width: 36px; height: 36px; border-radius: 10px; object-fit: cover; border: 1px solid rgba(255, 255, 255, 0.25); }
     .banner-text { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
     .banner-close {
@@ -539,38 +611,120 @@
       flex-shrink: 0;
     }
 
+    /* ================= EMOJI & STICKER TRAY ================= */
+    .emoji-sticker-tray {
+      background: rgba(14, 16, 36, 0.97);
+      border-top: 1px solid var(--glass-border);
+      display: none;
+      flex-direction: column;
+      height: 240px;
+      animation: popIn 0.18s ease;
+    }
+
+    .emoji-sticker-tray.open { display: flex; }
+
+    .tray-tabs {
+      display: flex;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 6px 10px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .tray-tab-btn {
+      flex: 1;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: none;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-dim);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .tray-tab-btn.active {
+      background: linear-gradient(135deg, #ff4ecd, #00e5ff);
+      color: #091020;
+    }
+
+    .tray-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 12px;
+    }
+
+    .emoji-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 6px;
+    }
+
+    .emoji-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.55rem;
+      cursor: pointer;
+      padding: 4px 0;
+      border-radius: 10px;
+      transition: transform 0.12s, background 0.15s;
+    }
+
+    .emoji-btn:active { transform: scale(1.25); background: rgba(255, 255, 255, 0.12); }
+
+    .sticker-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .sticker-pick-btn {
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 16px;
+      padding: 10px 6px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: transform 0.14s;
+    }
+
+    .sticker-pick-btn:active { transform: scale(0.92); }
+    .sticker-pick-btn span.st-ico { font-size: 2rem; line-height: 1.1; }
+    .sticker-pick-btn span.st-txt { font-size: 0.7rem; font-weight: 700; color: #fff; }
+
     /* Bottom Input Bar */
     .chat-input-bar {
       position: relative;
-      padding: 10px 12px 14px;
-      background: rgba(16, 18, 38, 0.92);
+      padding: 9px 10px 13px;
+      background: rgba(16, 18, 38, 0.94);
       border-top: 1px solid var(--glass-border);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 7px;
     }
 
     .msg-input {
       flex: 1;
-      padding: 12px 16px;
+      min-width: 0;
+      padding: 11px 14px;
       border-radius: 999px;
       border: 1px solid rgba(255, 255, 255, 0.14);
       background: rgba(255, 255, 255, 0.08);
       color: #fff;
-      font-size: 0.96rem;
+      font-size: 0.95rem;
       outline: none;
     }
 
     .msg-input::placeholder { color: rgba(255, 255, 255, 0.45); }
 
-    .attach-circle-btn {
-      width: 42px;
-      height: 42px;
+    .mini-circle-btn {
+      width: 39px;
+      height: 39px;
       border-radius: 50%;
       border: none;
-      background: rgba(255, 78, 205, 0.22);
-      color: #ff9be4;
-      font-size: 1.05rem;
+      font-size: 1rem;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -578,23 +732,25 @@
       flex-shrink: 0;
     }
 
-    .attach-circle-btn:active { transform: scale(0.9); }
+    .mini-circle-btn:active { transform: scale(0.9); }
+    .btn-emoji { background: rgba(255, 214, 0, 0.2); color: #ffe066; }
+    .btn-attach { background: rgba(255, 78, 205, 0.22); color: #ff9be4; }
+
     .send-wrap { position: relative; flex-shrink: 0; }
 
     .send-circle-btn {
-      width: 46px;
-      height: 46px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       border: none;
       background: linear-gradient(135deg, #00f59b, #00e5ff);
       color: #061422;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       box-shadow: 0 6px 18px rgba(0, 229, 255, 0.35);
-      transition: transform 0.14s, background 0.2s;
       user-select: none;
       -webkit-user-select: none;
       touch-action: manipulation;
@@ -612,12 +768,12 @@
       position: absolute;
       top: -4px;
       right: -3px;
-      width: 19px;
-      height: 19px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
       background: #ff3b5c;
       color: #fff;
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       font-weight: 800;
       display: none;
       align-items: center;
@@ -630,9 +786,9 @@
 
     .send-popup {
       position: absolute;
-      bottom: 58px;
+      bottom: 56px;
       right: 0;
-      width: 215px;
+      width: 210px;
       background: rgba(18, 20, 44, 0.97);
       border: 1px solid rgba(255, 78, 205, 0.45);
       border-radius: 18px;
@@ -642,7 +798,6 @@
       flex-direction: column;
       gap: 6px;
       z-index: 40;
-      animation: popIn 0.16s ease;
     }
 
     .send-popup.open { display: flex; }
@@ -654,7 +809,7 @@
       border: none;
       background: rgba(255, 255, 255, 0.07);
       color: #fff;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       font-weight: 600;
       cursor: pointer;
       display: flex;
@@ -666,12 +821,77 @@
     .popup-option.fire { background: linear-gradient(135deg, rgba(255, 78, 205, 0.35), rgba(255, 154, 60, 0.35)); color: #ffd4f4; }
     .popup-option.normal { background: rgba(0, 229, 255, 0.16); color: #9ff6ff; }
 
-    /* ================= MODAL ================= */
+    /* ================= MESSAGE LONG-PRESS ACTION SHEET ================= */
+    .action-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(4, 6, 16, 0.68);
+      backdrop-filter: blur(5px);
+      z-index: 70;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .action-backdrop.hidden { display: none; }
+
+    .action-sheet {
+      width: 100%;
+      background: rgba(20, 22, 48, 0.98);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 24px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      animation: popIn 0.18s ease;
+    }
+
+    .action-preview {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      padding: 6px 10px 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .sheet-btn {
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: none;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .sheet-btn:active { transform: scale(0.95); }
+    .sheet-btn.reply { background: rgba(0, 229, 255, 0.2); color: #8cf4ff; }
+    .sheet-btn.copy { background: rgba(0, 245, 155, 0.2); color: #8dffcf; }
+    .sheet-btn.edit { background: rgba(255, 214, 0, 0.22); color: #ffe680; }
+    .sheet-btn.del { background: rgba(255, 59, 92, 0.26); color: #ff8599; }
+    .sheet-btn.hidden { display: none; }
+
+    /* ================= VIEWER MODAL ================= */
     .modal-overlay {
       position: absolute;
       inset: 0;
       background: rgba(5, 6, 15, 0.96);
-      z-index: 60;
+      z-index: 65;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -680,7 +900,7 @@
       gap: 14px;
     }
 
-    .modal-overlay img, .modal-overlay video { max-width: 100%; max-height: 70%; border-radius: 18px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6); }
+    .modal-overlay img, .modal-overlay video { max-width: 100%; max-height: 70%; border-radius: 18px; }
 
     .modal-text-card {
       max-width: 90%;
@@ -707,7 +927,7 @@
       cursor: pointer;
     }
 
-    /* ================= CALL OVERLAY ================= */
+    /* ================= CALL OVERLAY + BEAUTY FILTERS ================= */
     #call-overlay {
       position: absolute;
       inset: 0;
@@ -717,73 +937,157 @@
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 36px 20px 34px;
+      padding: 30px 16px 26px;
     }
+
+    /* Screen Ring-Light Frame for dark rooms */
+    #ring-light-frame {
+      position: absolute;
+      inset: 0;
+      z-index: 6;
+      pointer-events: none;
+      border: 18px solid rgba(255, 248, 232, 0.92);
+      box-shadow: inset 0 0 65px rgba(255, 248, 232, 0.85);
+      display: none;
+    }
+
+    #ring-light-frame.on { display: block; }
 
     #remote-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; background: #000; }
 
     #local-video {
       position: absolute;
-      top: 20px;
+      top: 18px;
       right: 16px;
       width: 108px;
       height: 152px;
       border-radius: 16px;
       object-fit: cover;
-      z-index: 3;
+      z-index: 4;
       border: 2px solid rgba(255, 255, 255, 0.45);
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
       background: #111;
+      transform: scaleX(-1);
     }
 
-    .call-top-info { position: relative; z-index: 4; text-align: center; margin-top: 20px; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7); }
+    .call-top-info { position: relative; z-index: 5; text-align: center; margin-top: 18px; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7); }
 
     .call-avatar-big {
-      width: 96px;
-      height: 96px;
+      width: 94px;
+      height: 94px;
       border-radius: 50%;
       margin: 0 auto 14px;
       background: linear-gradient(135deg, #ff4ecd, #00e5ff);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.4rem;
+      font-size: 2.3rem;
       font-weight: 700;
       box-shadow: 0 0 36px rgba(0, 229, 255, 0.5);
       animation: floatPulse 2s infinite;
     }
 
-    .call-controls {
+    .call-bottom-stack {
       position: relative;
-      z-index: 4;
+      z-index: 8;
+      width: 100%;
       display: flex;
-      gap: 18px;
+      flex-direction: column;
       align-items: center;
-      background: rgba(10, 12, 26, 0.65);
-      backdrop-filter: blur(12px);
-      padding: 14px 22px;
+      gap: 12px;
+    }
+
+    /* Live Beauty & Filter Controls Panel */
+    .filter-panel {
+      width: 96%;
+      background: rgba(12, 14, 34, 0.84);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 22px;
+      padding: 12px 14px;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      animation: popIn 0.18s ease;
+    }
+
+    .filter-panel.open { display: flex; }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.78rem;
+      color: #e6f7ff;
+    }
+
+    .slider-row span.sl-label { width: 88px; flex-shrink: 0; font-weight: 600; }
+    .slider-row input[type="range"] { flex: 1; accent-color: #ff4ecd; cursor: pointer; }
+
+    .filter-chips {
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .filter-chips::-webkit-scrollbar { display: none; }
+
+    .filter-chip {
+      padding: 6px 12px;
       border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .filter-chip.active {
+      background: linear-gradient(135deg, #ff4ecd, #00e5ff);
+      color: #091020;
+      border-color: transparent;
+    }
+
+    .ring-light-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .call-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      background: rgba(10, 12, 26, 0.72);
+      backdrop-filter: blur(12px);
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
     }
 
     .call-btn {
-      width: 56px;
-      height: 56px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       border: none;
-      font-size: 1.25rem;
+      font-size: 1.15rem;
       color: #fff;
       background: rgba(255, 255, 255, 0.16);
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: transform 0.15s;
     }
 
     .call-btn:active { transform: scale(0.9); }
     .call-btn.accept { background: #00e676; color: #051b11; }
     .call-btn.end { background: #ff3b5c; color: #fff; }
     .call-btn.muted { background: #fff; color: #111; }
+    .call-btn.magic-on { background: linear-gradient(135deg, #ff4ecd, #00e5ff); color: #091020; }
 
     /* Toast */
     .toast {
@@ -811,7 +1115,11 @@
   <div class="app-shell">
     <div id="toast" class="toast">Alert</div>
 
-    <!-- ================= 1. STEALTH CALCULATOR SCREEN ================= -->
+    <!-- Hidden Raw Camera & Processing Canvas for Live Beauty/Filters + Zero-Freeze Camera Switch -->
+    <video id="raw-camera-video" autoplay playsinline muted style="display:none;"></video>
+    <canvas id="filter-canvas" style="display:none;"></canvas>
+
+    <!-- ================= 1. STEALTH CALCULATOR ================= -->
     <div id="calc-screen" class="screen">
       <div class="calc-brand"><i class="fa-solid fa-calculator"></i> QuickCalc</div>
       <div class="calc-display-wrap">
@@ -845,11 +1153,11 @@
       </div>
     </div>
 
-    <!-- ================= 2. PRIVATE ROOM LOGIN SCREEN ================= -->
+    <!-- ================= 2. PRIVATE ROOM LOGIN ================= -->
     <div id="login-screen" class="screen hidden">
       <div class="vault-badge"><i class="fa-solid fa-user-secret"></i></div>
       <div class="login-title">Secret Live Room</div>
-      <div class="login-sub">One-Time Seen • Refresh/Back pe Clear • Voice & Video</div>
+      <div class="login-sub">One-Time Seen • Swipe Reply • Beauty Video Call</div>
 
       <input id="inp-name" class="input-box" type="text" placeholder="Apna Nickname (dono alag rakho, e.g. R / P)" maxlength="18" />
       <input id="inp-room" class="input-box" type="text" placeholder="Secret Room Name (e.g. math101)" maxlength="24" />
@@ -884,7 +1192,7 @@
           <button class="circle-icon-btn btn-video" title="Video Call" onclick="initiateCall('video')">
             <i class="fa-solid fa-video"></i>
           </button>
-          <button class="circle-icon-btn btn-knock" title="Send Disguised Notification" onclick="sendKnock()">
+          <button class="circle-icon-btn btn-knock" title="Send Disguised Alert" onclick="sendKnock()">
             <i class="fa-solid fa-bell"></i>
           </button>
           <button class="circle-icon-btn btn-panic" title="Panic Escape" onclick="triggerPanic()">
@@ -907,11 +1215,25 @@
 
       <div id="messages-area" class="messages-area"></div>
 
+      <!-- Reply Banner -->
+      <div id="reply-banner" class="composer-banner hidden">
+        <div class="banner-left">
+          <i class="fa-solid fa-reply" style="color:#00e5ff;"></i>
+          <div class="banner-text">
+            <strong id="reply-banner-sender" style="color:#70f3ff;"></strong><br/>
+            <span id="reply-banner-text" style="opacity:0.8; font-size:0.75rem;"></span>
+          </div>
+        </div>
+        <button class="banner-close" onclick="cancelReply()" title="Cancel Reply">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
       <!-- Editing Banner -->
       <div id="edit-banner" class="composer-banner hidden">
         <div class="banner-left">
-          <i class="fa-solid fa-pen" style="color:#00e5ff;"></i>
-          <div class="banner-text" id="edit-banner-text">Message edit kar rahe ho...</div>
+          <i class="fa-solid fa-pen" style="color:#ffe066;"></i>
+          <div class="banner-text" id="edit-banner-text">Editing...</div>
         </div>
         <button class="banner-close" onclick="cancelEdit()" title="Cancel Edit">
           <i class="fa-solid fa-xmark"></i>
@@ -926,13 +1248,28 @@
         </button>
       </div>
 
+      <!-- Emoji & Sticker Tray -->
+      <div id="emoji-sticker-tray" class="emoji-sticker-tray">
+        <div class="tray-tabs">
+          <button id="tab-emoji" class="tray-tab-btn active" onclick="switchTrayTab('emoji')">😊 Emojis</button>
+          <button id="tab-sticker" class="tray-tab-btn" onclick="switchTrayTab('sticker')">✨ Stickers</button>
+        </div>
+        <div class="tray-body">
+          <div id="emoji-grid" class="emoji-grid"></div>
+          <div id="sticker-grid" class="sticker-grid" style="display:none;"></div>
+        </div>
+      </div>
+
       <!-- Bottom Input Bar -->
       <div class="chat-input-bar">
         <input type="file" id="file-input" style="display:none" onchange="handleFileSelect(event)" />
-        <button class="attach-circle-btn" title="Attach Photo / Video / Any File" onclick="document.getElementById('file-input').click()">
+        <button class="mini-circle-btn btn-emoji" title="Emoji & Stickers" onclick="toggleEmojiTray()">
+          <i class="fa-regular fa-face-smile"></i>
+        </button>
+        <button class="mini-circle-btn btn-attach" title="Attach Photo / Video / Any File" onclick="document.getElementById('file-input').click()">
           <i class="fa-solid fa-paperclip"></i>
         </button>
-        <input id="msg-input" class="msg-input" type="text" placeholder="Message likho... (Hold Send = 1x)" autocomplete="off" />
+        <input id="msg-input" class="msg-input" type="text" placeholder="Message likho..." autocomplete="off" />
 
         <div class="send-wrap">
           <div id="send-popup" class="send-popup">
@@ -954,6 +1291,19 @@
       </div>
     </div>
 
+    <!-- ================= LONG-PRESS MESSAGE ACTION MENU ================= -->
+    <div id="action-backdrop" class="action-backdrop hidden" onclick="closeActionSheet(event)">
+      <div class="action-sheet" onclick="event.stopPropagation()">
+        <div id="action-preview" class="action-preview">Message options</div>
+        <div class="action-grid">
+          <button id="act-reply" class="sheet-btn reply" onclick="actionReply()"><i class="fa-solid fa-reply"></i> Reply</button>
+          <button id="act-copy" class="sheet-btn copy" onclick="actionCopy()"><i class="fa-solid fa-copy"></i> Copy</button>
+          <button id="act-edit" class="sheet-btn edit" onclick="actionEdit()"><i class="fa-solid fa-pen"></i> Edit</button>
+          <button id="act-delete" class="sheet-btn del" onclick="actionDelete()"><i class="fa-solid fa-trash"></i> Delete</button>
+        </div>
+      </div>
+    </div>
+
     <!-- ================= VIEW-ONCE / PREVIEW MODAL ================= -->
     <div id="viewer-modal" class="modal-overlay hidden">
       <div id="modal-media-container" style="display:flex; flex-direction:column; align-items:center; width:100%;"></div>
@@ -964,6 +1314,7 @@
 
     <!-- ================= VOICE & VIDEO CALL OVERLAY ================= -->
     <div id="call-overlay" class="hidden">
+      <div id="ring-light-frame"></div>
       <video id="remote-video" autoplay playsinline></video>
       <video id="local-video" autoplay playsinline muted></video>
 
@@ -973,16 +1324,45 @@
         <p id="call-state-text" style="color:#8cf4ff; margin-top:6px;">Calling...</p>
       </div>
 
-      <div id="incoming-controls" class="call-controls hidden">
-        <button class="call-btn end" onclick="rejectCall()"><i class="fa-solid fa-phone-slash"></i></button>
-        <button class="call-btn accept" onclick="acceptCall()"><i class="fa-solid fa-phone"></i></button>
-      </div>
+      <div class="call-bottom-stack">
+        <!-- Beauty, Face Smooth & Filters Panel -->
+        <div id="filter-panel" class="filter-panel">
+          <div class="ring-light-row">
+            <span style="font-size:0.8rem; font-weight:700; color:#8cf4ff;"><i class="fa-solid fa-wand-magic-sparkles"></i> Beauty & Light</span>
+            <button id="ring-light-btn" class="pill-toggle" onclick="toggleRingLight()">
+              <i class="fa-solid fa-sun"></i> Screen Light: OFF
+            </button>
+          </div>
 
-      <div id="active-controls" class="call-controls hidden">
-        <button id="btn-mute" class="call-btn" onclick="toggleMute()"><i class="fa-solid fa-microphone"></i></button>
-        <button id="btn-cam" class="call-btn" onclick="toggleCamera()"><i class="fa-solid fa-video"></i></button>
-        <button id="btn-flip" class="call-btn" onclick="switchCamera()"><i class="fa-solid fa-camera-rotate"></i></button>
-        <button class="call-btn end" onclick="endCall(true)"><i class="fa-solid fa-phone-slash"></i></button>
+          <div class="slider-row">
+            <span class="sl-label">✨ Face Smooth</span>
+            <input id="smooth-slider" type="range" min="0" max="100" value="30" oninput="updateBeautyControls()" />
+            <span id="smooth-val" style="width:32px; text-align:right;">30%</span>
+          </div>
+
+          <div class="slider-row">
+            <span class="sl-label">💡 Brightness</span>
+            <input id="light-slider" type="range" min="80" max="165" value="108" oninput="updateBeautyControls()" />
+            <span id="light-val" style="width:32px; text-align:right;">108%</span>
+          </div>
+
+          <div id="filter-chips" class="filter-chips"></div>
+        </div>
+
+        <!-- Incoming Controls -->
+        <div id="incoming-controls" class="call-controls hidden">
+          <button class="call-btn end" onclick="rejectCall()"><i class="fa-solid fa-phone-slash"></i></button>
+          <button class="call-btn accept" onclick="acceptCall()"><i class="fa-solid fa-phone"></i></button>
+        </div>
+
+        <!-- Active Call Controls -->
+        <div id="active-controls" class="call-controls hidden">
+          <button id="btn-mute" class="call-btn" onclick="toggleMute()" title="Mute"><i class="fa-solid fa-microphone"></i></button>
+          <button id="btn-cam" class="call-btn" onclick="toggleCamera()" title="Camera On/Off"><i class="fa-solid fa-video"></i></button>
+          <button id="btn-flip" class="call-btn" onclick="switchCamera()" title="Switch Camera"><i class="fa-solid fa-camera-rotate"></i></button>
+          <button id="btn-filter" class="call-btn" onclick="toggleFilterPanel()" title="Beauty & Filters"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
+          <button class="call-btn end" onclick="endCall(true)" title="End Call"><i class="fa-solid fa-phone-slash"></i></button>
+        </div>
       </div>
     </div>
   </div>
@@ -993,9 +1373,42 @@
     const PANIC_REDIRECT_URL = "https://en.wikipedia.org/wiki/Engineering_physics";
     const MAX_FILE_MB = 15;
 
+    const EMOJIS = [
+      "❤️","😘","🥰","😍","🥺","🙈","🫂","💖","💘","💓","💕","🌹",
+      "😊","😂","🤣","😭","😤","🤭","😉","😎","🤩","🥳","😇","🫠",
+      "👍","👌","🙏","🤝","🫶","💋","🔥","✨","💯","🎉","💐","🦋",
+      "🌙","☀️","⭐","🎵","📞","💌","🍫","🧸","👑","👀","🤫","💫"
+    ];
+
+    const STICKERS = [
+      { id: "love",  emoji: "❤️‍🔥", label: "Love You",     bg: "linear-gradient(135deg, #ff2e63, #ff758c)" },
+      { id: "miss",  emoji: "🥺",   label: "Miss You",     bg: "linear-gradient(135deg, #7f00ff, #c471ed)" },
+      { id: "kiss",  emoji: "😘",   label: "Muahhh",       bg: "linear-gradient(135deg, #f953c6, #b91d73)" },
+      { id: "hug",   emoji: "🫂",   label: "Tight Hug",    bg: "linear-gradient(135deg, #00c6ff, #0072ff)" },
+      { id: "shy",   emoji: "🙈",   label: "Aww Shy",      bg: "linear-gradient(135deg, #ff758c, #ff7eb3)" },
+      { id: "gm",    emoji: "☀️",   label: "Good Morning", bg: "linear-gradient(135deg, #f7971e, #ffd200)" },
+      { id: "gn",    emoji: "🌙",   label: "Good Night",   bg: "linear-gradient(135deg, #141e30, #4b6cb7)" },
+      { id: "sorry", emoji: "🙏",   label: "Sorry Na",     bg: "linear-gradient(135deg, #fc4a1a, #f7b733)" },
+      { id: "call",  emoji: "📞",   label: "Call Me",      bg: "linear-gradient(135deg, #11998e, #38ef7d)" },
+      { id: "fire",  emoji: "🔥",   label: "Uff Fire",     bg: "linear-gradient(135deg, #ff416c, #ff4b2b)" },
+      { id: "laugh", emoji: "😂",   label: "Haha LOL",     bg: "linear-gradient(135deg, #f2994a, #f2c94c)" },
+      { id: "pout",  emoji: "😤",   label: "Hmph Angry",   bg: "linear-gradient(135deg, #8e2de2, #4a00e0)" }
+    ];
+
+    const VIDEO_FILTERS = [
+      { id: "normal",  name: "Normal",      css: "" },
+      { id: "beauty",  name: "Soft Beauty", css: "contrast(0.96) saturate(1.16) sepia(0.08)" },
+      { id: "golden",  name: "Golden Hour", css: "sepia(0.24) saturate(1.28) contrast(1.04)" },
+      { id: "pink",    name: "Pink Glow",   css: "hue-rotate(-14deg) saturate(1.25) contrast(0.98)" },
+      { id: "crystal", name: "Crystal HD",  css: "contrast(1.12) saturate(1.18)" },
+      { id: "night",   name: "Night Boost", css: "brightness(1.28) contrast(1.08) saturate(1.1)" },
+      { id: "bw",      name: "B&W Classic", css: "grayscale(1) contrast(1.12)" }
+    ];
+
     const socket = io();
     let swRegistration = null;
     let mySid = null;
+    let myName = "Me";
     let currentRoom = null;
     let partnerOnline = false;
     let partnerName = "Partner";
@@ -1003,20 +1416,31 @@
     let isBlurred = false;
     let typingTimeout = null;
 
-    // Seen-Once & Composer States
+    // Chat States
     const unseenIncomingIds = new Set();
+    const messageStore = new Map(); // msgId -> { id, kind, text, sender, isMe, oneTime }
+    let activeReply = null;         // { id, sender, text }
     let editingMsgId = null;
     let pendingFile = null;
     let oneTimeSticky = false;
+    let selectedActionMsgId = null;
     let modalAutoCloseTimer = null;
 
-    // WebRTC State
+    // WebRTC & Beauty Canvas States
     let peerConn = null;
-    let localStream = null;
+    let rawStream = null;
+    let processedStream = null;
+    let isPipelineRunning = false;
+    let renderLoopId = null;
     let currentCallType = 'video';
     let currentFacing = 'user';
+    let isSwitchingCam = false;
     let isMuted = false;
     let isCamOff = false;
+    let activeFilterId = 'beauty';
+    let faceSmoothLevel = 30;
+    let lightLevel = 108;
+    let ringLightOn = false;
     let pendingIceCandidates = [];
     const rtcConfig = {
       iceServers: [
@@ -1025,7 +1449,39 @@
       ]
     };
 
-    // ================= SERVICE WORKER & MOBILE NOTIFICATIONS =================
+    // ================= INIT EMOJI, STICKERS & FILTERS UI =================
+    (function initStaticGrids() {
+      const eGrid = document.getElementById('emoji-grid');
+      EMOJIS.forEach(em => {
+        const b = document.createElement('button');
+        b.className = 'emoji-btn';
+        b.textContent = em;
+        b.onclick = () => insertEmoji(em);
+        eGrid.appendChild(b);
+      });
+
+      const sGrid = document.getElementById('sticker-grid');
+      STICKERS.forEach(st => {
+        const b = document.createElement('button');
+        b.className = 'sticker-pick-btn';
+        b.style.background = st.bg;
+        b.innerHTML = `<span class="st-ico">${st.emoji}</span><span class="st-txt">${st.label}</span>`;
+        b.onclick = () => sendSticker(st.id);
+        sGrid.appendChild(b);
+      });
+
+      const fChips = document.getElementById('filter-chips');
+      VIDEO_FILTERS.forEach(f => {
+        const c = document.createElement('button');
+        c.className = 'filter-chip' + (f.id === activeFilterId ? ' active' : '');
+        c.textContent = f.name;
+        c.dataset.filterId = f.id;
+        c.onclick = () => selectVideoFilter(f.id);
+        fChips.appendChild(c);
+      });
+    })();
+
+    // ================= SERVICE WORKER & NOTIFICATIONS =================
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
         .then(reg => { swRegistration = reg; })
@@ -1078,7 +1534,7 @@
       t.textContent = msg;
       t.classList.add('show');
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
     }
 
     function showScreen(id) {
@@ -1179,8 +1635,11 @@
       socket.emit('leave_vault');
       document.getElementById('messages-area').innerHTML = "";
       unseenIncomingIds.clear();
+      messageStore.clear();
+      cancelReply();
       cancelEdit();
       clearPendingFile();
+      closeEmojiTray();
       currentRoom = null;
       partnerOnline = false;
       showScreen('calc-screen');
@@ -1192,11 +1651,13 @@
 
     socket.on('join_success', (data) => {
       mySid = data.mySid;
+      myName = data.myName;
       currentRoom = data.room;
       document.getElementById('room-label').textContent = "Room: " + data.room;
       document.getElementById('messages-area').innerHTML = "";
       unseenIncomingIds.clear();
-      addSystemNote("One-Time Seen active • Seen hone ke baad Back/Refresh pe sab clear");
+      messageStore.clear();
+      addSystemNote("Right Swipe = Reply • Hold Msg = Edit/Delete/Copy");
       showScreen('chat-screen');
     });
 
@@ -1227,10 +1688,9 @@
           tick.innerHTML = '<i class="fa-solid fa-check-double"></i> Seen';
         }
 
-        // Agar "After-Seen 30s" ON tha, toh timer sirf SEEN hone ke baad shuru hoga
         if (bubble.dataset.autohide === 'true' && !bubble.dataset.hideScheduled) {
           bubble.dataset.hideScheduled = 'true';
-          scheduleAutoHide(bubble);
+          scheduleAutoHide(bubble.closest('.msg-row') || bubble);
         }
       });
     });
@@ -1266,6 +1726,7 @@
     });
 
     const msgInput = document.getElementById('msg-input');
+    msgInput.addEventListener('focus', () => closeEmojiTray());
     msgInput.addEventListener('input', () => {
       socket.emit('typing', { isTyping: true });
       clearTimeout(typingTimeout);
@@ -1290,7 +1751,237 @@
       }
     });
 
-    // ================= 5. LONG-PRESS SEND BUTTON & ONE-TIME =================
+    // ================= 5. EMOJI & STICKER TRAY =================
+    function toggleEmojiTray() {
+      const tray = document.getElementById('emoji-sticker-tray');
+      tray.classList.toggle('open');
+    }
+
+    function closeEmojiTray() {
+      document.getElementById('emoji-sticker-tray').classList.remove('open');
+    }
+
+    function switchTrayTab(tab) {
+      document.getElementById('tab-emoji').classList.toggle('active', tab === 'emoji');
+      document.getElementById('tab-sticker').classList.toggle('active', tab === 'sticker');
+      document.getElementById('emoji-grid').style.display = tab === 'emoji' ? 'grid' : 'none';
+      document.getElementById('sticker-grid').style.display = tab === 'sticker' ? 'grid' : 'none';
+    }
+
+    function insertEmoji(em) {
+      msgInput.value += em;
+    }
+
+    function sendSticker(stickerId) {
+      socket.emit('send_sticker', {
+        stickerId,
+        autoHide: autoHideAfterSeen,
+        replyTo: activeReply
+      });
+      cancelReply();
+      closeEmojiTray();
+    }
+
+    // ================= 6. SWIPE-RIGHT TO REPLY & LONG-PRESS MENU =================
+    function attachBubbleGestures(rowEl, bubbleEl, msgId) {
+      let startX = 0, startY = 0, curX = 0;
+      let isSwiping = false;
+      let holdTimer = null;
+      const hint = rowEl.querySelector('.swipe-reply-hint');
+
+      const onStart = (clientX, clientY, target) => {
+        if (target.closest('button, video, audio')) return;
+        startX = clientX;
+        startY = clientY;
+        curX = 0;
+        isSwiping = false;
+
+        holdTimer = setTimeout(() => {
+          holdTimer = null;
+          if (!isSwiping) openActionSheet(msgId);
+        }, 460);
+      };
+
+      const onMove = (clientX, clientY) => {
+        const dx = clientX - startX;
+        const dy = clientY - startY;
+
+        if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+          clearTimeout(holdTimer);
+          holdTimer = null;
+        }
+
+        if (dx > 12 && Math.abs(dx) > Math.abs(dy) * 1.35) {
+          isSwiping = true;
+          curX = Math.min(dx * 0.65, 68);
+          bubbleEl.style.transition = 'none';
+          bubbleEl.style.transform = `translateX(${curX}px)`;
+          if (hint) {
+            hint.style.opacity = String(Math.min(1, curX / 45));
+            hint.style.transform = `scale(${0.6 + Math.min(0.45, curX / 120)})`;
+          }
+        }
+      };
+
+      const onEnd = () => {
+        clearTimeout(holdTimer);
+        holdTimer = null;
+        if (isSwiping) {
+          bubbleEl.style.transition = 'transform 0.22s ease';
+          bubbleEl.style.transform = 'translateX(0)';
+          if (hint) {
+            hint.style.opacity = '0';
+            hint.style.transform = 'scale(0.6)';
+          }
+          if (curX >= 42) {
+            const info = messageStore.get(msgId);
+            if (info && !info.oneTime) {
+              if (navigator.vibrate) navigator.vibrate(30);
+              startReply(info);
+            }
+          }
+          isSwiping = false;
+        }
+      };
+
+      bubbleEl.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) onStart(e.touches[0].clientX, e.touches[0].clientY, e.target);
+      }, { passive: true });
+
+      bubbleEl.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 1) onMove(e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive: true });
+
+      bubbleEl.addEventListener('touchend', onEnd);
+      bubbleEl.addEventListener('touchcancel', onEnd);
+
+      // Desktop right-click support
+      bubbleEl.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        openActionSheet(msgId);
+      });
+    }
+
+    function openActionSheet(msgId) {
+      const info = messageStore.get(msgId);
+      if (!info) return;
+      selectedActionMsgId = msgId;
+      if (navigator.vibrate) navigator.vibrate(40);
+
+      document.getElementById('action-preview').textContent = `${info.sender}: ${info.text}`;
+      document.getElementById('act-reply').classList.toggle('hidden', !!info.oneTime);
+      document.getElementById('act-copy').classList.toggle('hidden', info.kind !== 'text' || !!info.oneTime);
+      document.getElementById('act-edit').classList.toggle('hidden', !(info.isMe && info.kind === 'text' && !info.oneTime));
+      document.getElementById('act-delete').innerHTML = info.isMe
+        ? '<i class="fa-solid fa-trash"></i> Delete (Both)'
+        : '<i class="fa-solid fa-trash"></i> Hide Msg';
+
+      document.getElementById('action-backdrop').classList.remove('hidden');
+    }
+
+    function closeActionSheet() {
+      document.getElementById('action-backdrop').classList.add('hidden');
+      selectedActionMsgId = null;
+    }
+
+    function actionReply() {
+      const info = messageStore.get(selectedActionMsgId);
+      closeActionSheet();
+      if (info && !info.oneTime) startReply(info);
+    }
+
+    async function actionCopy() {
+      const info = messageStore.get(selectedActionMsgId);
+      closeActionSheet();
+      if (!info || info.kind !== 'text') return;
+      try {
+        await navigator.clipboard.writeText(info.text);
+        showToast("Message copy ho gaya!");
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = info.text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+        showToast("Message copy ho gaya!");
+      }
+    }
+
+    function actionEdit() {
+      const info = messageStore.get(selectedActionMsgId);
+      closeActionSheet();
+      if (info && info.isMe && info.kind === 'text' && !info.oneTime) {
+        startEditMessage(info.id, info.text);
+      }
+    }
+
+    function actionDelete() {
+      const info = messageStore.get(selectedActionMsgId);
+      closeActionSheet();
+      if (!info) return;
+      if (info.isMe) {
+        socket.emit('delete_message', { msgId: info.id });
+      } else {
+        removeMessageFromDOM(info.id);
+        showToast("Message tumhari screen se hat gaya");
+      }
+    }
+
+    function removeMessageFromDOM(msgId) {
+      const bubble = document.querySelector(`.msg-bubble[data-msg-id="${msgId}"]`);
+      if (bubble) {
+        const row = bubble.closest('.msg-row') || bubble;
+        row.style.transition = 'opacity 0.25s, transform 0.25s';
+        row.style.opacity = '0';
+        row.style.transform = 'scale(0.85)';
+        setTimeout(() => row.remove(), 250);
+      }
+      messageStore.delete(msgId);
+    }
+
+    socket.on('message_deleted', (data) => {
+      removeMessageFromDOM(data.msgId);
+    });
+
+    function startReply(info) {
+      cancelEdit();
+      activeReply = {
+        id: info.id,
+        sender: info.isMe ? myName : info.sender,
+        text: info.text
+      };
+      document.getElementById('reply-banner-sender').textContent = "Replying to " + activeReply.sender;
+      document.getElementById('reply-banner-text').textContent = activeReply.text;
+      document.getElementById('reply-banner').classList.remove('hidden');
+      msgInput.focus();
+    }
+
+    function cancelReply() {
+      activeReply = null;
+      document.getElementById('reply-banner').classList.add('hidden');
+    }
+
+    function buildQuotedReplyEl(replyTo) {
+      if (!replyTo || !replyTo.text) return null;
+      const box = document.createElement('div');
+      box.className = 'quoted-reply';
+      box.innerHTML = `
+        <div class="quoted-reply-sender">${escapeHtml(replyTo.sender || 'Partner')}</div>
+        <div class="quoted-reply-text">${escapeHtml(replyTo.text)}</div>`;
+      box.onclick = () => {
+        const target = document.querySelector(`.msg-bubble[data-msg-id="${replyTo.id}"]`);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          target.classList.remove('highlight-flash');
+          void target.offsetWidth;
+          target.classList.add('highlight-flash');
+        }
+      };
+      return box;
+    }
+
+    // ================= 7. LONG-PRESS SEND BUTTON & ONE-TIME =================
     const sendBtn = document.getElementById('send-btn');
     const sendPopup = document.getElementById('send-popup');
     let pressTimer = null;
@@ -1355,7 +2046,7 @@
         oneTimeSticky = false;
       } else {
         oneTimeSticky = true;
-        showToast("One-Time (1x) mode ON! Agla photo/file/SMS 1x jayega.");
+        showToast("One-Time (1x) mode ON!");
       }
       updateSendBtnVisual();
     }
@@ -1383,6 +2074,7 @@
 
     function executeSend(isOneTime) {
       const text = msgInput.value.trim();
+      const replyPayload = activeReply;
 
       if (pendingFile) {
         socket.emit('send_file', {
@@ -1391,25 +2083,30 @@
           fileType: pendingFile.fileType,
           fileSize: pendingFile.fileSize,
           oneTime: isOneTime,
-          autoHide: autoHideAfterSeen
+          autoHide: autoHideAfterSeen,
+          replyTo: replyPayload
         });
         clearPendingFile();
+        cancelReply();
       }
 
       if (text) {
         socket.emit('send_message', {
           text,
           autoHide: autoHideAfterSeen,
-          oneTime: isOneTime
+          oneTime: isOneTime,
+          replyTo: replyPayload
         });
         socket.emit('typing', { isTyping: false });
         msgInput.value = "";
+        cancelReply();
       }
     }
 
-    // ================= 6. MESSAGE EDITING =================
+    // ================= 8. MESSAGE EDITING =================
     function startEditMessage(msgId, currentText) {
       clearPendingFile();
+      cancelReply();
       editingMsgId = msgId;
       document.getElementById('edit-banner-text').textContent = "Editing: " + currentText;
       document.getElementById('edit-banner').classList.remove('hidden');
@@ -1441,12 +2138,15 @@
       const editedSpan = bubble.querySelector('.edited-tag');
       if (editedSpan) editedSpan.textContent = "(edited)";
 
-      bubble.classList.remove('edited-flash');
+      const stored = messageStore.get(data.msgId);
+      if (stored) stored.text = data.newText;
+
+      bubble.classList.remove('highlight-flash');
       void bubble.offsetWidth;
-      bubble.classList.add('edited-flash');
+      bubble.classList.add('highlight-flash');
     });
 
-    // ================= 7. PRIVACY TOGGLES & TEXT MESSAGES =================
+    // ================= 9. PRIVACY TOGGLES & RENDERING MESSAGES =================
     function toggleAutoHideAfterSeen() {
       autoHideAfterSeen = !autoHideAfterSeen;
       const btn = document.getElementById('autohide-toggle');
@@ -1473,23 +2173,49 @@
 
     socket.on('system_note', (data) => addSystemNote(data.msg));
 
-    function scheduleAutoHide(bubble) {
+    function scheduleAutoHide(el) {
       setTimeout(() => {
-        bubble.style.transition = 'opacity 0.5s, transform 0.5s';
-        bubble.style.opacity = '0';
-        bubble.style.transform = 'scale(0.85)';
-        setTimeout(() => bubble.remove(), 500);
+        el.style.transition = 'opacity 0.5s, transform 0.5s';
+        el.style.opacity = '0';
+        el.style.transform = 'scale(0.85)';
+        setTimeout(() => el.remove(), 500);
       }, 30000);
+    }
+
+    function createMessageRow(isMe, msgId, autoHide, extraBubbleClass = '') {
+      const row = document.createElement('div');
+      row.className = 'msg-row ' + (isMe ? 'me' : 'them');
+
+      const hint = document.createElement('div');
+      hint.className = 'swipe-reply-hint';
+      hint.innerHTML = '<i class="fa-solid fa-reply"></i>';
+      row.appendChild(hint);
+
+      const bubble = document.createElement('div');
+      bubble.className = `msg-bubble ${isMe ? 'me' : 'them'} ${extraBubbleClass}`.trim();
+      bubble.setAttribute('data-msg-id', msgId);
+      if (autoHide) bubble.dataset.autohide = 'true';
+      row.appendChild(bubble);
+
+      return { row, bubble };
     }
 
     socket.on('receive_message', (data) => {
       const area = document.getElementById('messages-area');
       const isMe = data.senderSid === mySid;
+      const { row, bubble } = createMessageRow(isMe, data.id, data.autoHide);
 
-      const bubble = document.createElement('div');
-      bubble.className = 'msg-bubble ' + (isMe ? 'me' : 'them');
-      bubble.setAttribute('data-msg-id', data.id);
-      if (data.autoHide) bubble.dataset.autohide = 'true';
+      messageStore.set(data.id, {
+        id: data.id,
+        kind: 'text',
+        text: data.oneTime ? '🔥 One-Time Message' : data.text,
+        sender: data.sender,
+        isMe,
+        oneTime: !!data.oneTime
+      });
+
+      const q = buildQuotedReplyEl(data.replyTo);
+      if (q) bubble.appendChild(q);
 
       if (data.oneTime) {
         const card = document.createElement('div');
@@ -1517,18 +2243,6 @@
       const meta = document.createElement('div');
       meta.className = 'msg-meta';
 
-      if (isMe && !data.oneTime) {
-        const editBtn = document.createElement('button');
-        editBtn.className = 'edit-msg-btn';
-        editBtn.title = 'Edit message';
-        editBtn.innerHTML = '<i class="fa-solid fa-pen"></i>';
-        editBtn.onclick = () => {
-          const latestText = bubble.querySelector('.msg-text')?.textContent || data.text;
-          startEditMessage(data.id, latestText);
-        };
-        meta.appendChild(editBtn);
-      }
-
       const editedSpan = document.createElement('span');
       editedSpan.className = 'edited-tag';
       editedSpan.textContent = data.edited ? '(edited)' : '';
@@ -1546,7 +2260,8 @@
       }
 
       bubble.appendChild(meta);
-      area.appendChild(bubble);
+      attachBubbleGestures(row, bubble, data.id);
+      area.appendChild(row);
       area.scrollTop = area.scrollHeight;
 
       if (!isMe) {
@@ -1561,18 +2276,66 @@
       }
     });
 
-    // ================= 8. ALL FILE TYPES ATTACH, PREVIEW, SAVE & SEEN =================
+    socket.on('receive_sticker', (data) => {
+      const st = STICKERS.find(x => x.id === data.stickerId) || STICKERS[0];
+      const area = document.getElementById('messages-area');
+      const isMe = data.senderSid === mySid;
+      const { row, bubble } = createMessageRow(isMe, data.id, data.autoHide, 'sticker-bubble');
+
+      messageStore.set(data.id, {
+        id: data.id,
+        kind: 'sticker',
+        text: `${st.emoji} ${st.label}`,
+        sender: data.sender,
+        isMe,
+        oneTime: false
+      });
+
+      const q = buildQuotedReplyEl(data.replyTo);
+      if (q) bubble.appendChild(q);
+
+      const card = document.createElement('div');
+      card.className = 'sticker-visual';
+      card.style.background = st.bg;
+      card.innerHTML = `<div class="sticker-emoji">${st.emoji}</div><div class="sticker-label">${st.label}</div>`;
+      bubble.appendChild(card);
+
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const meta = document.createElement('div');
+      meta.className = 'msg-meta';
+      meta.innerHTML = `<span>${timeStr}</span>`;
+      if (isMe) {
+        const tick = document.createElement('span');
+        tick.className = 'seen-indicator';
+        tick.innerHTML = '<i class="fa-solid fa-check"></i> Sent';
+        meta.appendChild(tick);
+      }
+      bubble.appendChild(meta);
+
+      attachBubbleGestures(row, bubble, data.id);
+      area.appendChild(row);
+      area.scrollTop = area.scrollHeight;
+
+      if (!isMe) {
+        playTone(680, 0.11);
+        unseenIncomingIds.add(data.id);
+        checkAndMarkSeen();
+      }
+    });
+
+    // ================= 10. ALL FILE TYPES ATTACH, PREVIEW, SAVE & SEEN =================
     function handleFileSelect(event) {
       const file = event.target.files[0];
       event.target.value = "";
       if (!file) return;
 
       if (file.size > MAX_FILE_MB * 1024 * 1024) {
-        showToast(`File ${MAX_FILE_MB} MB se badi hai! Thodi chhoti file select karo.`);
+        showToast(`File ${MAX_FILE_MB} MB se badi hai!`);
         return;
       }
 
       cancelEdit();
+      closeEmojiTray();
       showToast("File ready ho rahi hai...");
 
       const reader = new FileReader();
@@ -1620,10 +2383,20 @@
     socket.on('receive_file', (data) => {
       const area = document.getElementById('messages-area');
       const isMe = data.senderSid === mySid;
-      const bubble = document.createElement('div');
-      bubble.className = 'msg-bubble ' + (isMe ? 'me' : 'them');
-      bubble.setAttribute('data-msg-id', data.id);
-      if (data.autoHide) bubble.dataset.autohide = 'true';
+      const { row, bubble } = createMessageRow(isMe, data.id, data.autoHide);
+
+      const labelType = data.fileType.startsWith('image/') ? '📷 Photo' : (data.fileType.startsWith('video/') ? '🎬 Video' : '📎 ' + data.fileName);
+      messageStore.set(data.id, {
+        id: data.id,
+        kind: 'file',
+        text: data.oneTime ? '🔥 One-Time Media' : labelType,
+        sender: data.sender,
+        isMe,
+        oneTime: !!data.oneTime
+      });
+
+      const q = buildQuotedReplyEl(data.replyTo);
+      if (q) bubble.appendChild(q);
 
       if (data.oneTime) {
         const card = document.createElement('div');
@@ -1697,7 +2470,8 @@
       }
 
       bubble.appendChild(meta);
-      area.appendChild(bubble);
+      attachBubbleGestures(row, bubble, data.id);
+      area.appendChild(row);
       area.scrollTop = area.scrollHeight;
 
       if (!isMe) {
@@ -1712,7 +2486,7 @@
       }
     });
 
-    // ================= 9. VIEWER MODAL =================
+    // ================= 11. VIEWER MODAL =================
     function closeViewerModal() {
       clearTimeout(modalAutoCloseTimer);
       document.getElementById('viewer-modal').classList.add('hidden');
@@ -1782,17 +2556,6 @@
         box.className = 'modal-text-card';
         box.innerHTML = `<i class="fa-solid ${getFileIcon(mime, fileName)}" style="font-size:2.4rem; margin-bottom:10px; display:block;"></i>${escapeHtml(fileName)}`;
         container.appendChild(box);
-        if (mime.includes('pdf') || mime.startsWith('text/')) {
-          const frame = document.createElement('iframe');
-          frame.src = src;
-          frame.style.width = '92%';
-          frame.style.height = '55vh';
-          frame.style.borderRadius = '14px';
-          frame.style.border = 'none';
-          frame.style.marginTop = '12px';
-          frame.style.background = '#fff';
-          container.appendChild(frame);
-        }
         document.getElementById('modal-caption').textContent = "One-Time File • Close karte hi destroy ho jayegi";
         document.getElementById('viewer-modal').classList.remove('hidden');
       }
@@ -1817,7 +2580,7 @@
       document.getElementById('viewer-modal').classList.remove('hidden');
     }
 
-    // ================= 10. DISGUISED KNOCK & PANIC =================
+    // ================= 12. DISGUISED KNOCK & PANIC =================
     async function sendKnock() {
       await requestNotifPermission();
       if ("Notification" in window && Notification.permission === "denied") {
@@ -1826,16 +2589,13 @@
       socket.emit('knock_partner');
     }
 
-    socket.on('knock_status', (data) => {
-      showToast(data.msg);
-    });
+    socket.on('knock_status', (data) => showToast(data.msg));
 
     socket.on('knock_received', (data) => {
       playTone(880, 0.22);
       setTimeout(() => playTone(1040, 0.22), 200);
       if (navigator.vibrate) navigator.vibrate([220, 100, 220, 100, 220]);
 
-      // Chat screen mein visible ping banner
       const area = document.getElementById('messages-area');
       const div = document.createElement('div');
       div.className = 'knock-pill';
@@ -1844,7 +2604,6 @@
       area.scrollTop = area.scrollHeight;
 
       showToast((data.sender || "Partner") + " ne Knock kiya hai!");
-      // Android Chrome + Desktop OS notification bar alert via Service Worker
       showSystemNotification("Study Reminder", data.msg);
     });
 
@@ -1855,15 +2614,145 @@
       window.location.replace(PANIC_REDIRECT_URL);
     }
 
-    // ================= 11. WEBRTC VOICE & VIDEO CALL =================
-    async function getMedia(type) {
-      const constraints = {
-        audio: true,
-        video: type === 'video' ? { facingMode: currentFacing } : false
-      };
-      return await navigator.mediaDevices.getUserMedia(constraints);
+    // ================= 13. VIDEO BEAUTY FILTERS & CANVAS PIPELINE =================
+    function toggleFilterPanel() {
+      const panel = document.getElementById('filter-panel');
+      const open = panel.classList.toggle('open');
+      document.getElementById('btn-filter').classList.toggle('magic-on', open);
     }
 
+    function toggleRingLight() {
+      ringLightOn = !ringLightOn;
+      document.getElementById('ring-light-frame').classList.toggle('on', ringLightOn);
+      const btn = document.getElementById('ring-light-btn');
+      btn.classList.toggle('active', ringLightOn);
+      btn.innerHTML = `<i class="fa-solid fa-sun"></i> Screen Light: ${ringLightOn ? 'ON' : 'OFF'}`;
+    }
+
+    function selectVideoFilter(id) {
+      activeFilterId = id;
+      document.querySelectorAll('.filter-chip').forEach(c => {
+        c.classList.toggle('active', c.dataset.filterId === id);
+      });
+    }
+
+    function updateBeautyControls() {
+      faceSmoothLevel = Number(document.getElementById('smooth-slider').value);
+      lightLevel = Number(document.getElementById('light-slider').value);
+      document.getElementById('smooth-val').textContent = faceSmoothLevel + '%';
+      document.getElementById('light-val').textContent = lightLevel + '%';
+    }
+
+    function buildCanvasFilterString() {
+      const f = VIDEO_FILTERS.find(x => x.id === activeFilterId) || VIDEO_FILTERS[0];
+      const bright = (lightLevel / 100).toFixed(2);
+      return `brightness(${bright}) ${f.css}`.trim();
+    }
+
+    function drawFilteredFrame() {
+      if (!isPipelineRunning) return;
+      const rawVideo = document.getElementById('raw-camera-video');
+      const canvas = document.getElementById('filter-canvas');
+      const ctx = canvas.getContext('2d');
+
+      if (isCamOff) {
+        ctx.save();
+        if ('filter' in ctx) ctx.filter = 'none';
+        ctx.fillStyle = '#0d1024';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(255,255,255,0.65)';
+        ctx.font = 'bold 20px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Camera Off', canvas.width / 2, canvas.height / 2);
+        ctx.restore();
+      } else if (rawVideo.readyState >= 2 && rawVideo.videoWidth > 0) {
+        const maxDim = 640;
+        const vw = rawVideo.videoWidth;
+        const vh = rawVideo.videoHeight;
+        const scale = Math.min(1, maxDim / Math.max(vw, vh));
+        const tw = Math.round(vw * scale);
+        const th = Math.round(vh * scale);
+        if (canvas.width !== tw || canvas.height !== th) {
+          canvas.width = tw;
+          canvas.height = th;
+        }
+
+        // Base frame with light & color filter
+        ctx.save();
+        if ('filter' in ctx) ctx.filter = buildCanvasFilterString();
+        ctx.drawImage(rawVideo, 0, 0, canvas.width, canvas.height);
+        ctx.restore();
+
+        // Face Smooth soft-glow pass
+        if (faceSmoothLevel > 0 && 'filter' in ctx) {
+          ctx.save();
+          const blurPx = 1.6 + (faceSmoothLevel / 100) * 4.2;
+          const alpha = (faceSmoothLevel / 100) * 0.40;
+          ctx.globalAlpha = alpha;
+          ctx.filter = `blur(${blurPx.toFixed(1)}px) brightness(${(lightLevel / 100 * 1.04).toFixed(2)}) saturate(1.06)`;
+          ctx.drawImage(rawVideo, 0, 0, canvas.width, canvas.height);
+          ctx.restore();
+        }
+      }
+
+      renderLoopId = requestAnimationFrame(drawFilteredFrame);
+    }
+
+    async function startLocalMedia(type) {
+      const constraints = {
+        audio: true,
+        video: type === 'video'
+          ? { facingMode: currentFacing, width: { ideal: 640 }, height: { ideal: 480 } }
+          : false
+      };
+
+      rawStream = await navigator.mediaDevices.getUserMedia(constraints);
+
+      if (type === 'audio') {
+        processedStream = rawStream;
+        return processedStream;
+      }
+
+      const rawVideo = document.getElementById('raw-camera-video');
+      const canvas = document.getElementById('filter-canvas');
+      rawVideo.srcObject = new MediaStream(rawStream.getVideoTracks());
+
+      await new Promise((resolve) => {
+        const done = () => {
+          rawVideo.removeEventListener('loadedmetadata', done);
+          resolve();
+        };
+        if (rawVideo.readyState >= 1) resolve();
+        else rawVideo.addEventListener('loadedmetadata', done);
+      });
+      try { await rawVideo.play(); } catch {}
+
+      // Set initial canvas size from camera feed
+      const vw = rawVideo.videoWidth || 480;
+      const vh = rawVideo.videoHeight || 640;
+      const scale = Math.min(1, 640 / Math.max(vw, vh));
+      canvas.width = Math.round(vw * scale);
+      canvas.height = Math.round(vh * scale);
+
+      if (typeof canvas.captureStream === 'function') {
+        isPipelineRunning = true;
+        drawFilteredFrame();
+        const canvasStream = canvas.captureStream(25);
+        processedStream = new MediaStream([
+          ...canvasStream.getVideoTracks(),
+          ...rawStream.getAudioTracks()
+        ]);
+      } else {
+        processedStream = rawStream;
+      }
+
+      const localVideo = document.getElementById('local-video');
+      localVideo.srcObject = processedStream;
+      localVideo.style.transform = currentFacing === 'user' ? 'scaleX(-1)' : 'scaleX(1)';
+      return processedStream;
+    }
+
+    // ================= 14. WEBRTC VOICE & VIDEO CALL =================
     function createPeerConnection() {
       const pc = new RTCPeerConnection(rtcConfig);
       pc.onicecandidate = (e) => {
@@ -1872,8 +2761,8 @@
       pc.ontrack = (e) => {
         document.getElementById('remote-video').srcObject = e.streams[0];
       };
-      if (localStream) {
-        localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
+      if (processedStream) {
+        processedStream.getTracks().forEach(t => pc.addTrack(t, processedStream));
       }
       return pc;
     }
@@ -1893,6 +2782,8 @@
       document.getElementById('local-video').style.display = isVid ? 'block' : 'none';
       document.getElementById('btn-cam').style.display = isVid ? 'flex' : 'none';
       document.getElementById('btn-flip').style.display = isVid ? 'flex' : 'none';
+      document.getElementById('btn-filter').style.display = isVid ? 'flex' : 'none';
+      if (!isVid) document.getElementById('filter-panel').classList.remove('open');
     }
 
     async function initiateCall(type) {
@@ -1902,8 +2793,7 @@
       }
       currentCallType = type;
       try {
-        localStream = await getMedia(type);
-        document.getElementById('local-video').srcObject = localStream;
+        await startLocalMedia(type);
         showCallUI(type === 'video' ? "Video Calling..." : "Voice Calling...", false, type);
         socket.emit('call_request', { callType: type });
       } catch {
@@ -1926,11 +2816,10 @@
 
     async function acceptCall() {
       try {
-        localStream = await getMedia(currentCallType);
-        document.getElementById('local-video').srcObject = localStream;
+        await startLocalMedia(currentCallType);
         peerConn = createPeerConnection();
         showCallUI("Connected • Live", false, currentCallType);
-        if (currentCallType === 'video') document.getElementById('call-top-info').style.opacity = '0.35';
+        if (currentCallType === 'video') document.getElementById('call-top-info').style.opacity = '0.28';
         socket.emit('call_accept', { callType: currentCallType });
       } catch {
         showToast("Camera/Mic access fail hua!");
@@ -1953,7 +2842,7 @@
       const offer = await peerConn.createOffer();
       await peerConn.setLocalDescription(offer);
       document.getElementById('call-state-text').textContent = "Connected • Live";
-      if (currentCallType === 'video') document.getElementById('call-top-info').style.opacity = '0.35';
+      if (currentCallType === 'video') document.getElementById('call-top-info').style.opacity = '0.28';
       socket.emit('webrtc_offer', { offer });
     });
 
@@ -1987,55 +2876,133 @@
 
     function endCall(notifyPeer) {
       if (notifyPeer) socket.emit('call_end');
+      isPipelineRunning = false;
+      if (renderLoopId) { cancelAnimationFrame(renderLoopId); renderLoopId = null; }
       if (peerConn) { peerConn.close(); peerConn = null; }
-      if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+      if (rawStream) { rawStream.getTracks().forEach(t => t.stop()); rawStream = null; }
+      if (processedStream) { processedStream.getTracks().forEach(t => t.stop()); processedStream = null; }
+
+      document.getElementById('raw-camera-video').srcObject = null;
       document.getElementById('remote-video').srcObject = null;
       document.getElementById('local-video').srcObject = null;
       document.getElementById('call-overlay').classList.add('hidden');
+      document.getElementById('filter-panel').classList.remove('open');
+      document.getElementById('btn-filter').classList.remove('magic-on');
       document.getElementById('call-top-info').style.opacity = '1';
+      if (ringLightOn) toggleRingLight();
+
       pendingIceCandidates = [];
+      isSwitchingCam = false;
       isMuted = false;
       isCamOff = false;
+      currentFacing = 'user';
       document.getElementById('btn-mute').classList.remove('muted');
       document.getElementById('btn-cam').classList.remove('muted');
     }
 
     function toggleMute() {
-      if (!localStream) return;
+      if (!rawStream) return;
       isMuted = !isMuted;
-      localStream.getAudioTracks().forEach(t => t.enabled = !isMuted);
+      rawStream.getAudioTracks().forEach(t => t.enabled = !isMuted);
       const btn = document.getElementById('btn-mute');
       btn.classList.toggle('muted', isMuted);
       btn.innerHTML = isMuted ? '<i class="fa-solid fa-microphone-slash"></i>' : '<i class="fa-solid fa-microphone"></i>';
     }
 
     function toggleCamera() {
-      if (!localStream) return;
+      if (!rawStream) return;
       isCamOff = !isCamOff;
-      localStream.getVideoTracks().forEach(t => t.enabled = !isCamOff);
+      rawStream.getVideoTracks().forEach(t => t.enabled = !isCamOff);
       const btn = document.getElementById('btn-cam');
       btn.classList.toggle('muted', isCamOff);
       btn.innerHTML = isCamOff ? '<i class="fa-solid fa-video-slash"></i>' : '<i class="fa-solid fa-video"></i>';
     }
 
+    // FIXED: Hardware-safe Camera Switch (works repeatedly without freezing)
     async function switchCamera() {
-      if (!localStream || currentCallType !== 'video') return;
-      currentFacing = currentFacing === 'user' ? 'environment' : 'user';
+      if (!rawStream || currentCallType !== 'video' || isSwitchingCam) return;
+      isSwitchingCam = true;
+      const flipBtn = document.getElementById('btn-flip');
+      flipBtn.style.opacity = '0.45';
+
+      const targetFacing = currentFacing === 'user' ? 'environment' : 'user';
+      const oldVideoTracks = rawStream.getVideoTracks();
+      const oldDeviceId = oldVideoTracks[0]?.getSettings?.()?.deviceId;
+
+      // 1. Pehle purana camera track STOP karo taaki mobile hardware sensor release ho jaye
+      oldVideoTracks.forEach(track => {
+        track.stop();
+        rawStream.removeTrack(track);
+      });
+
+      // 2. Mobile camera HAL ko release hone ke liye 180ms gap
+      await new Promise(r => setTimeout(r, 180));
+
+      let newVideoStream = null;
+
+      // Attempt A: Exact facingMode
       try {
-        const newStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: currentFacing }, audio: false });
-        const newTrack = newStream.getVideoTracks()[0];
-        const oldTrack = localStream.getVideoTracks()[0];
-        if (peerConn) {
+        newVideoStream = await navigator.mediaDevices.getUserMedia({
+          audio: false,
+          video: { facingMode: { exact: targetFacing }, width: { ideal: 640 }, height: { ideal: 480 } }
+        });
+      } catch {
+        // Attempt B: Available video cameras list mein se agla camera pick karo
+        try {
+          const devices = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput');
+          if (devices.length > 1) {
+            const curIdx = devices.findIndex(d => d.deviceId === oldDeviceId);
+            const nextDev = devices[(curIdx + 1) % devices.length];
+            newVideoStream = await navigator.mediaDevices.getUserMedia({
+              audio: false,
+              video: { deviceId: { exact: nextDev.deviceId }, width: { ideal: 640 }, height: { ideal: 480 } }
+            });
+          }
+        } catch {}
+      }
+
+      // Attempt C: Soft facingMode fallback
+      if (!newVideoStream) {
+        try {
+          newVideoStream = await navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: { facingMode: targetFacing }
+          });
+        } catch {
+          // Recovery: wapas default camera kholo taaki screen black na rahe
+          try {
+            newVideoStream = await navigator.mediaDevices.getUserMedia({ audio: false, video: true });
+          } catch {}
+        }
+      }
+
+      if (newVideoStream && newVideoStream.getVideoTracks().length > 0) {
+        const newTrack = newVideoStream.getVideoTracks()[0];
+        newTrack.enabled = !isCamOff;
+        rawStream.addTrack(newTrack);
+
+        const actualFacing = newTrack.getSettings?.()?.facingMode;
+        currentFacing = (actualFacing === 'environment' || actualFacing === 'user') ? actualFacing : targetFacing;
+
+        const rawVideo = document.getElementById('raw-camera-video');
+        rawVideo.srcObject = new MediaStream([newTrack]);
+        try { await rawVideo.play(); } catch {}
+
+        // Agar browser canvas.captureStream support nahi karta toh direct track replace karo
+        if (!isPipelineRunning && peerConn) {
           const sender = peerConn.getSenders().find(s => s.track && s.track.kind === 'video');
           if (sender) await sender.replaceTrack(newTrack);
+          document.getElementById('local-video').srcObject = new MediaStream([newTrack]);
         }
-        oldTrack.stop();
-        localStream.removeTrack(oldTrack);
-        localStream.addTrack(newTrack);
-        document.getElementById('local-video').srcObject = localStream;
-      } catch {
-        showToast("Camera switch supported nahi hai is device pe");
+
+        document.getElementById('local-video').style.transform = currentFacing === 'user' ? 'scaleX(-1)' : 'scaleX(1)';
+        showToast(currentFacing === 'user' ? "Front Camera ON" : "Back Camera ON");
+      } else {
+        showToast("Camera switch nahi hua — ek baar aur tap karo");
       }
+
+      flipBtn.style.opacity = '1';
+      isSwitchingCam = false;
     }
   </script>
 </body>
